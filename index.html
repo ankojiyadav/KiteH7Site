@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Kitronix - Advanced Flight Controller</title>
+    <title>Kite H7 - Advanced Flight Controller</title>
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link href="styles.css" rel="stylesheet"/>
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('kitronix-theme') || 'light');</script>
+    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('kite-h7-theme') || 'light');</script>
 </head>
 <body>
 
@@ -104,7 +104,7 @@
             <div>
                 <h2>24/7 After-Sales Support</h2>
                 <div class="slide-support-img-mobile">
-                    <img alt="Kitronix Support" src="assets/edited/A3edited.png" style="max-width:325px; height: fit-content; margin: 1rem auto; display:block;"/>
+                    <img alt="Kite H7 Support" src="assets/edited/A3edited.png" style="max-width:325px; height: fit-content; margin: 1rem auto; display:block;"/>
                 </div>
                 <p style="margin-bottom: 1.5rem;">Always-on expert support for troubleshooting, updates, and optimal hardware performance.</p>
                 <div style="margin-top: 1.5rem; display: flex; gap: 12px; flex-wrap: wrap;">
@@ -119,7 +119,7 @@
                 </div>
             </div>
             <div class="feature-image">
-                <img alt="Kitronix Support" src="assets/edited/A3.png"/>
+                <img alt="Kite H7 Support" src="assets/edited/A3.png"/>
             </div>
         </div>
     </div>
@@ -713,12 +713,12 @@
     }
 
     // Apply saved theme on load
-    var saved = localStorage.getItem('kitronix-theme') || 'light';
+    var saved = localStorage.getItem('kite-h7-theme') || 'light';
     applyTheme(saved);
 
     btn.addEventListener('click', function () {
         var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        localStorage.setItem('kitronix-theme', next);
+        localStorage.setItem('kite-h7-theme', next);
         applyTheme(next);
     });
 })();
