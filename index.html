@@ -1,728 +1,1226 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Kitronix - Advanced Flight Controller</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link href="styles.css" rel="stylesheet"/>
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('kitronix-theme') || 'light');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KITE H7 — Flight Controller</title>
+<meta name="description" content="KITE H7 is an STM32H7-powered flight controller with dual-redundant IMUs, built for custom firmware, ArduPilot and PX4.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap" rel="stylesheet">
+<script>
+  (function () {
+    var t = 'light';
+    try { t = localStorage.getItem('kiteh7-theme') || 'light'; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', t);
+    document.documentElement.classList.add('js');
+  })();
+</script>
+<style>
+/* ───────── Tokens ───────── */
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --paper: #f5f5f7;
+  --ink: #1d1d1f;
+  --grey: #6e6e73;
+  --grey-dark: #86868b;
+  --hair: #d2d2d7;
+
+  --bg: var(--white);
+  --bg-alt: var(--paper);
+  --fg: var(--ink);
+  --fg-2: var(--grey);
+  --line: var(--hair);
+  --btn-bg: var(--ink);
+  --btn-fg: var(--white);
+  --nav-bg: rgba(255,255,255,0.72);
+  --field: var(--white);
+  --accent: #0071e3;
+
+  --font: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --wrap: 1120px;
+}
+[data-theme="dark"] {
+  --bg: var(--black);
+  --bg-alt: #161617;
+  --fg: #f5f5f7;
+  --fg-2: var(--grey-dark);
+  --line: #333336;
+  --btn-bg: #f5f5f7;
+  --btn-fg: var(--black);
+  --nav-bg: rgba(0,0,0,0.72);
+  --field: #1d1d1f;
+  --accent: #2997ff;
+}
+/* Sections that stay black in both themes */
+.on-black {
+  --bg: var(--black);
+  --bg-alt: #161617;
+  --fg: #f5f5f7;
+  --fg-2: var(--grey-dark);
+  --line: #333336;
+  --btn-bg: #f5f5f7;
+  --btn-fg: var(--black);
+  --accent: #2997ff;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* ───────── Base ───────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color .4s var(--ease), color .4s var(--ease);
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+section { scroll-margin-top: 52px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+.material-symbols-outlined { font-size: 22px; line-height: 1; }
+
+/* ───────── Type scale ───────── */
+.display {
+  font-size: clamp(40px, 6.2vw, 80px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+}
+.title {
+  font-size: clamp(32px, 4.4vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.07;
+}
+.lead {
+  font-size: clamp(19px, 1.9vw, 24px);
+  font-weight: 500;
+  line-height: 1.38;
+  letter-spacing: -0.015em;
+  color: var(--fg-2);
+  max-width: 34ch;
+}
+.body { color: var(--fg-2); max-width: 60ch; }
+
+/* ───────── Buttons ───────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 28px;
+  border: 0; border-radius: 999px;
+  background: var(--btn-bg); color: var(--btn-fg);
+  font-size: 17px; font-weight: 500; letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s var(--ease);
+}
+.btn:hover { opacity: .86; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn-ghost { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1.5px var(--fg); }
+.text-link { font-weight: 500; border-bottom: 1px solid transparent; transition: border-color .2s; }
+.text-link:hover { border-color: currentColor; }
+
+/* ───────── Ribbon ───────── */
+.ribbon {
+  background: var(--bg-alt);
+  color: var(--fg);
+  text-align: center;
+  font-size: 14px;
+  padding: 12px 24px;
+}
+.ribbon a { color: var(--accent); }
+.ribbon a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.hl { color: var(--accent); }
+
+/* ───────── Nav ───────── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  height: 52px;
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s, background-color .4s;
+}
+.nav.scrolled { border-bottom-color: var(--line); }
+.nav-inner {
+  max-width: var(--wrap); height: 100%; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.nav-logo { display: flex; align-items: center; height: 100%; }
+.nav-logo img { height: 40px; width: auto; transition: filter .4s var(--ease); }
+/* Same KITE H7 logo in both themes; flipped to white on dark */
+[data-theme="dark"] .nav-logo img { filter: invert(1); }
+.nav-links { display: flex; gap: 36px; font-size: 13px; }
+.nav-links a { opacity: .78; transition: opacity .2s; }
+.nav-links a:hover { opacity: 1; }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-buy { min-height: 30px; padding: 0 16px; font-size: 13px; }
+.icon-btn {
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: transparent; color: var(--fg);
+  cursor: pointer; transition: background-color .2s;
+}
+.icon-btn:hover { background: var(--bg-alt); }
+.menu-btn { display: none; }
+
+/* ───────── Hero ───────── */
+.hero {
+  position: relative;
+  min-height: calc(100svh - 52px);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  text-align: center;
+  padding: clamp(56px, 9vh, 112px) 24px 0;
+  overflow: hidden;
+}
+.hero-copy { position: relative; z-index: 2; will-change: opacity, transform; }
+.hero-word {
+  font-size: clamp(76px, 15vw, 196px);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: .9;
+  background: linear-gradient(180deg, #ffffff 35%, #5e5e62 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  padding-bottom: .06em;
+}
+.hero-tag {
+  margin-top: 14px;
+  font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.hero-sub { margin: 14px auto 0; color: var(--fg-2); max-width: 46ch; font-size: clamp(16px, 1.5vw, 19px); }
+.hero-ctas { margin-top: 30px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.hero-media {
+  position: relative; z-index: 1;
+  width: min(820px, 100%);
+  margin-top: clamp(24px, 5vh, 56px);
+}
+.hero-media::before {
+  content: ""; position: absolute; inset: 18% 12% 8%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.22), transparent 70%);
+  filter: blur(30px);
+}
+.hero-media img { position: relative; width: 100%; }
+
+/* One orchestrated entrance, hero only */
+.js .hero-word  { animation: rise 1.4s var(--ease) both; }
+.js .hero-tag   { animation: rise 1.4s var(--ease) .15s both; }
+.js .hero-sub   { animation: rise 1.4s var(--ease) .25s both; }
+.js .hero-ctas  { animation: rise 1.4s var(--ease) .35s both; }
+.js .hero-media { animation: lift 1.8s var(--ease) .3s both; }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes lift { from { opacity: 0; transform: translateY(80px) scale(.94); } to { opacity: 1; transform: none; } }
+
+/* ───────── Performance ───────── */
+.perf { padding: clamp(96px, 14vw, 160px) 0 clamp(80px, 10vw, 120px); background: var(--bg); }
+.perf-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: end; }
+.perf-image {
+  margin-top: 64px;
+  border-radius: 32px; overflow: hidden;
+  background: var(--black);
+  aspect-ratio: 16 / 9;
+}
+.perf-image img { width: 100%; height: 100%; object-fit: contain; }
+.facts {
+  margin-top: 64px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+}
+.fact { border-top: 1px solid var(--line); padding-top: 20px; }
+.fact-big { font-size: clamp(34px, 3.6vw, 48px); font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
+.fact-big small { font-size: .45em; font-weight: 600; letter-spacing: -0.01em; margin-left: 4px; }
+.fact p { margin-top: 10px; font-size: 15px; color: var(--fg-2); }
+
+/* ───────── Sensors ───────── */
+.sensors { padding: clamp(96px, 14vw, 160px) 0; }
+.sensors-head { text-align: center; max-width: 760px; margin: 0 auto; }
+.sensors-head .body { margin: 18px auto 0; }
+.sensors-hero {
+  margin-top: 56px;
+  border-radius: 32px; overflow: hidden;
+  aspect-ratio: 21 / 9; background: #0a0a0a;
+}
+.sensors-hero img { width: 100%; height: 100%; object-fit: cover; }
+
+.panel {
+  background: var(--bg-alt);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 28px;
+  padding: clamp(28px, 3.5vw, 44px);
+}
+.feat-grid { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feat { display: flex; flex-direction: column; justify-content: space-between; min-height: 260px; }
+.feat.wide { grid-column: span 2; }
+.feat-icon {
+  width: 60px; height: 60px; border-radius: 18px;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,.08); color: var(--accent);
+}
+.feat-icon .material-symbols-outlined { font-size: 30px; }
+.feat h3 {
+  margin-top: 48px;
+  font-size: clamp(28px, 3vw, 40px); font-weight: 700;
+  letter-spacing: -0.04em; line-height: 1.05;
+}
+.feat.wide h3 {
+  font-size: clamp(34px, 4.4vw, 60px);
+  background: linear-gradient(180deg, #ffffff 30%, #6e6e73 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-bottom: .05em;
+}
+.feat p { margin-top: 8px; color: var(--fg-2); max-width: 40ch; }
+
+/* ───────── Ready to fly ───────── */
+.ready-head { text-align: center; max-width: 860px; margin: 0 auto; padding: clamp(96px, 14vw, 160px) 24px 0; }
+.ready-head .lead { margin: 20px auto 0; max-width: 40ch; }
+
+.assemble { position: relative; height: 420vh; }
+.assemble-stage {
+  position: sticky; top: 52px;
+  height: calc(100svh - 52px);
+  max-width: var(--wrap); margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: 1fr 1.25fr; gap: 40px; align-items: center;
+}
+.a-steps { position: relative; min-height: 230px; }
+.a-step {
+  position: absolute; inset: 0 0 auto 0;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.a-step.is-active { opacity: 1; transform: none; }
+.a-step .lead { margin-top: 16px; }
+.a-dots { display: flex; gap: 8px; margin-top: 8px; }
+.a-dots span {
+  width: 8px; height: 8px; border-radius: 999px; background: var(--line);
+  transition: width .5s var(--ease), background-color .5s var(--ease);
+}
+.a-dots span.on { width: 28px; background: var(--fg); }
+
+.a-visual { width: 100%; aspect-ratio: 1; max-height: calc(100svh - 140px); justify-self: center; }
+.a-visual svg { width: 100%; height: 100%; overflow: visible; transition: filter .8s var(--ease); }
+.assemble.flying .a-visual svg { filter: drop-shadow(0 40px 60px rgba(41,151,255,.28)); }
+.a-trace { stroke: #2997ff; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 144; stroke-dashoffset: 144; }
+.prop { transform-box: fill-box; transform-origin: center; }
+.prop ellipse { transition: opacity .6s var(--ease); }
+.prop-disc { opacity: 0; transition: opacity .6s var(--ease); }
+.assemble.flying .prop { animation: spin .45s linear infinite; }
+.assemble.flying .prop.ccw { animation-direction: reverse; }
+.assemble.flying .prop ellipse { opacity: .35; }
+.assemble.flying .prop-disc { opacity: 1; }
+.assemble.flying #aBob { animation: bob 3.2s ease-in-out infinite; }
+.assemble.flying .led { animation: blink 1.2s steps(2, jump-none) infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes bob { 50% { transform: translateY(-12px); } }
+@keyframes blink { 50% { opacity: .15; } }
+
+/* Reduced motion: show the finished drone, no scroll story */
+.assemble.static { height: auto; }
+.assemble.static .assemble-stage { position: relative; top: 0; height: auto; padding-top: 64px; }
+
+/* ───────── Missions ───────── */
+.missions { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg); }
+.missions-head { text-align: center; max-width: 760px; margin: 0 auto; }
+.missions-head .lead { margin: 18px auto 0; }
+.mission-grid { margin-top: 56px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.mission {
+  background: var(--bg-alt); border-radius: 28px; padding: 32px;
+  min-height: 290px; display: flex; flex-direction: column; justify-content: space-between;
+}
+.mission-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  display: grid; place-items: center;
+  background: var(--bg); color: var(--accent);
+}
+.mission-icon .material-symbols-outlined { font-size: 28px; }
+.mission h3 { margin-top: 40px; font-size: 26px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.mission p { margin-top: 8px; font-size: 15px; color: var(--fg-2); }
+.missions .hero-ctas { margin-top: 56px; }
+
+@media (max-width: 900px) {
+  .mission-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 833px) {
+  .assemble { height: 380vh; }
+  .assemble-stage {
+    grid-template-columns: 1fr; grid-template-rows: auto 1fr;
+    align-items: start; gap: 8px; padding-top: 28px; text-align: center;
+  }
+  .a-steps { min-height: 176px; }
+  .a-step .lead { margin-inline: auto; }
+  .a-dots { justify-content: center; }
+  .a-visual { max-height: 56svh; }
+}
+@media (max-width: 600px) {
+  .mission-grid { grid-template-columns: 1fr; }
+  .mission { min-height: 0; }
+  .mission h3 { margin-top: 28px; }
+}
+
+/* ───────── Specs ───────── */
+.specs { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg-alt); }
+.spec-table { margin-top: 56px; }
+.spec-row {
+  display: grid; grid-template-columns: 260px 1fr; gap: 24px;
+  padding: 36px 0; border-top: 1px solid var(--line);
+}
+.spec-row h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+.spec-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 28px 40px; }
+.spec-k { font-size: 14px; color: var(--fg-2); }
+.spec-v { font-size: 21px; font-weight: 600; letter-spacing: -0.02em; margin-top: 2px; }
+
+/* ───────── Gallery ───────── */
+.gallery { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg); }
+.gallery-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+.gallery-ctrls { display: flex; gap: 12px; }
+.round-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 0;
+  background: var(--bg-alt); color: var(--fg);
+  display: grid; place-items: center; cursor: pointer;
+  transition: background-color .2s, opacity .2s;
+}
+.round-btn:hover { background: var(--line); }
+.round-btn:disabled { opacity: .35; cursor: default; }
+.rail {
+  margin-top: 48px;
+  display: flex; gap: 20px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 0 max(24px, calc((100vw - var(--wrap)) / 2 + 24px)) 8px;
+  scroll-padding: 0 max(24px, calc((100vw - var(--wrap)) / 2 + 24px));
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail figure {
+  flex: 0 0 min(78vw, 640px);
+  aspect-ratio: 4 / 3;
+  scroll-snap-align: start;
+  border-radius: 28px; overflow: hidden;
+  background: var(--bg-alt);
+  display: grid; place-items: center;
+}
+.rail img { width: 100%; height: 100%; object-fit: contain; padding: 32px; }
+.rail figure.photo img { object-fit: cover; padding: 0; }
+
+/* ───────── Support ───────── */
+.support { padding: clamp(96px, 14vw, 160px) 0; }
+.support-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
+.support-links { list-style: none; }
+.support-links li { border-top: 1px solid var(--line); }
+.support-links li:last-child { border-bottom: 1px solid var(--line); }
+.support-links a {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center;
+  padding: 24px 0;
+}
+.support-links .material-symbols-outlined { font-size: 28px; }
+.support-links strong { display: block; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
+.support-links span.desc { display: block; font-size: 15px; color: var(--fg-2); margin-top: 2px; }
+.support-links .go { color: var(--fg-2); transition: transform .25s var(--ease), color .2s; }
+.support-links a:hover .go { transform: translateX(4px); color: var(--accent); }
+
+/* ───────── Contact ───────── */
+.contact { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg-alt); }
+.contact-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+.contact-inner .lead { margin: 16px auto 0; }
+.contact-form { margin-top: 48px; display: grid; gap: 14px; text-align: left; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field label { display: block; font-size: 13px; color: var(--fg-2); margin: 0 0 6px 4px; }
+.field input, .field textarea {
+  width: 100%;
+  font: inherit; font-size: 17px; color: var(--fg);
+  background: var(--field);
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 15px 16px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field textarea { min-height: 150px; resize: vertical; }
+.field input::placeholder, .field textarea::placeholder { color: var(--fg-2); opacity: .7; }
+.field input:focus, .field textarea:focus {
+  outline: none; border-color: var(--fg);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--fg) 12%, transparent);
+}
+.form-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+.form-status { font-size: 15px; color: var(--fg-2); }
+.form-status.ok { color: var(--fg); }
+.form-status.err { color: #d70015; }
+
+/* ───────── Visit / Address ───────── */
+.visit { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg); }
+.visit-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(40px, 6vw, 88px); align-items: center; }
+.address {
+  margin-top: 28px;
+  font-style: normal;
+  font-size: clamp(19px, 1.9vw, 24px);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  color: var(--fg-2);
+}
+.address strong { display: block; color: var(--fg); font-weight: 600; }
+.visit .hero-ctas { justify-content: flex-start; margin-top: 32px; }
+.map {
+  border-radius: 32px; overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--bg-alt);
+  border: 1px solid var(--line);
+}
+.map iframe {
+  width: 100%; height: 100%; border: 0; display: block;
+  filter: grayscale(1) contrast(1.05);
+}
+[data-theme="dark"] .map iframe { filter: grayscale(1) invert(0.92) contrast(0.9); }
+
+/* ───────── Final CTA ───────── */
+.final { padding: clamp(96px, 14vw, 160px) 24px; text-align: center; }
+.final .display { max-width: 14ch; margin: 0 auto; }
+.final .hero-ctas { margin-top: 36px; }
+
+/* ───────── Footer ───────── */
+footer { background: var(--bg-alt); color: var(--fg-2); font-size: 12px; padding: 40px 0 28px; border-top: 1px solid var(--line); }
+.foot-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 32px; }
+.foot-brand strong { display: block; color: var(--fg); font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.foot-brand p { max-width: 32ch; }
+.foot-col h4 { color: var(--fg); font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+.foot-col ul { list-style: none; display: grid; gap: 8px; }
+.foot-col a:hover { color: var(--fg); text-decoration: underline; }
+.foot-bottom { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+/* ───────── Responsive ───────── */
+@media (max-width: 900px) {
+  .perf-head, .support-grid, .visit-grid, .feat-grid { grid-template-columns: 1fr; }
+  .feat.wide { grid-column: auto; }
+  .feat { min-height: 0; }
+  .feat h3 { margin-top: 32px; }
+  .sensors-hero { aspect-ratio: 4 / 3; }
+  .facts { grid-template-columns: repeat(2, 1fr); }
+  .spec-row { grid-template-columns: 1fr; }
+  .foot-grid { grid-template-columns: repeat(2, 1fr); }
+  .foot-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 833px) {
+  .menu-btn { display: grid; }
+  .nav-links {
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; gap: 0;
+    background: var(--bg);
+    padding: 8px 24px 32px;
+    font-size: 26px; font-weight: 600; letter-spacing: -0.02em;
+    height: calc(100svh - 52px);
+    opacity: 0; transform: translateY(-8px); pointer-events: none;
+    transition: opacity .3s var(--ease), transform .3s var(--ease);
+  }
+  .nav-links a { opacity: 1; padding: 12px 0; }
+  .nav.open .nav-links { opacity: 1; transform: none; pointer-events: auto; }
+  .nav.open { background: var(--bg); }
+}
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .perf-image { aspect-ratio: 4 / 3; border-radius: 24px; }
+  .gallery-ctrls { display: none; }
+  .facts { gap: 28px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
 </head>
 <body>
 
-<!-- Yellow Strip -->
-<div class="yellow-strip">&lt&lt Smart Tech for Your Next Build &gt&gt</div>
+<!-- Ribbon -->
+<div class="ribbon">Built for custom firmware, ArduPilot and PX4. <a href="product.html">Buy KITE H7</a></div>
 
-<!-- Header -->
-<header>
-    <div class="header-container">
-        <a class="logo" href="#" style="display: flex; align-items: center; gap: 0.5rem;">
-            <img id="siteLogo" src="assets/edited/Kitronix.png" alt="Kite H7 Logo" style="height: 72px; width: 72px; object-fit: contain;">
-        </a>
-        <nav id="mainNavIndex">
-            <a href="#overview">Home</a>
-            <a href="product.html">Purchase</a>
-            <a href="kitronix-workshop.html">Workshop</a>
-            <a href="#support">Support</a>
-            <a href="about.html">About</a>
-           
-        </nav>
-        <div class="header-actions-right">
-            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle dark/light mode">
-                <span class="material-symbols-outlined" id="themeToggleIcon">dark_mode</span>
-            </button>
-            <button class="icon-btn mobile-menu-btn" id="mobileMenuBtnIndex">
-                <span class="material-symbols-outlined" style="font-size: 20px;">menu</span>
-            </button>
-        </div>
+<!-- Nav -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#overview" aria-label="KITE H7 home">
+      <img id="siteLogo" src="assets/edited/kiteh7.png" alt="KITE H7">
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="#performance">Performance</a>
+      <a href="#sensors">Sensors</a>
+      <a href="#ready">Ready to fly</a>
+      <a href="#specs">Tech specs</a>
+      <a href="#support">Support</a>
+      <a href="#contact">Contact</a>
+      <a href="#visit">Visit us</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn nav-buy" href="product.html">Buy</a>
+      <button class="icon-btn" id="themeToggleBtn" aria-label="Switch colour theme">
+        <span class="material-symbols-outlined" id="themeToggleIcon">dark_mode</span>
+      </button>
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
     </div>
+  </div>
 </header>
 
-<!-- Hero Section Carousel -->
-<section id="overview" class="hero-carousel">
+<main>
 
-     <!-- Slide 0: Hero Intro (cinematic) -->
-    <div class="hero-carousel-slide" style="background-image: url('assets/edited/mainbg.jpg'); background-size: cover; background-position: center;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.55) 100%);"></div>
-        <div class="hero-container" style="position: relative; z-index: 2; display: flex; align-items: flex-start; padding-bottom: 6rem; margin-bottom: 0%;">
-            <div style="max-width: 700px;">
-                <p style=" text-transform: uppercase; font-weight: 200;  font-family: 'Orbitron', sans-serif; color: #ffe401; font-size: 60px; font-family: Ethnocentric; text-shadow: 0 4px 12px rgba(0,0,0,0.95), 0 8px 20px rgba(0,0,0,0.8);"><span>KITE H7</span><br></p>
-                <p style="color: #ffffff; font-size: 14px; margin-bottom: 3.5rem; letter-spacing: 0.05em; margin-top: 0%; text-shadow: 0 10px 12px rgba(0,0,0,0.95), 0 8px 20px rgba(0,0,0,0.8);"> WHERE HARDWARE MEETS PERFORMANCE</span></p><br><br>
-                <br>
-                <!-- <h1 style="font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 400; color: hsl(54, 100%, 50%); line-height: 1.05; margin-bottom: 0; text-shadow: 0 4px 24px rgba(0,0,0,0.6); font-family: 'Ethnocentric', sans-serif; text-transform: uppercase;">KITE H7</h1> -->
-                <p style="font-size: clamp(1rem, 2vw, 1.25rem); margin-top: 45%; color: rgba(255,255,255,0.88); line-height: 1.7;  max-width: 560px;">STM32H7-powered flight controller built for custom firmware development. Advanced dual-IMU architecture for stable and precise flight control.</p>
-                <!-- <div class="hero-buttons">
-                    <a href="#contact" class="btn-primary">Contact Us</a>
-                    <a href="product.html" class="btn-secondary">SPECIFICATIONS</a>
-                </div> clamp(300px, 2.2rem) -->
-            </div>
-        </div>
+<!-- Hero -->
+<section class="hero on-black" id="overview">
+  <div class="hero-copy" id="heroCopy">
+    <h1 class="hero-word">KITE H7</h1>
+    <p class="hero-tag">Where hardware meets performance.</p>
+    <p class="hero-sub">An STM32H7 flight controller built for custom firmware, with dual IMUs for stable, precise flight.</p>
+    <div class="hero-ctas">
+      <a class="btn" href="product.html">Buy now</a>
+      <a class="btn btn-ghost" href="#specs">See tech specs</a>
     </div>
-
-    <!-- Slide 1: Dual IMU Architecture (dark) -->
-    <div class="hero-carousel-slide slide-dark slide-imu" style="background-image: url('assets/edited/neon.png'); background-size:cover; background-repeat: no-repeat; background-position: center; background-color:#000;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.72) 50%, rgba(0,0,0,0.55) 100%);"></div>
-        <div class="hero-slide-dark-inner">
-            <div>
-                
-                <h2>Dual IMU Architecture</h2>
-                <p style="margin-bottom: 2rem;">Advanced Dual-Redundant sensor architecture delivering exceptional precision and reliability for mission-critical flight applications.</p>
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <div style="border-left: 3px solid #ffe401; padding-left: 1.5rem;">
-                        <h3 style="color:#ffe401; font-size:1.125rem; margin-bottom:0.25rem; font-weight:600;">ICM-42688 - IMU 1</h3>
-                        <p style="font-size:0.95rem; opacity:0.85;">±16 g accel, ±2000 dps </p>
-                    </div>
-                    <div style="border-left: 3px solid #ffe401; padding-left: 1.5rem;">
-                        <h3 style="color:#ffe401; font-size:1.125rem; margin-bottom:0.25rem; font-weight:600;">BMI088 - IMU 2</h3>
-                        <p style="font-size:0.95rem; opacity:0.85;">±24 g accel, ±2000 dps</p>
-                    </div>
-                    <div style="border-left: 3px solid #ffe401; padding-left: 1.5rem;">
-                        <h3 style="color:#ffe401; font-size:1.125rem; margin-bottom:0.25rem; font-weight:600;">BMP388 - Barometer</h3>
-                        <p style="font-size:0.95rem; opacity:0.85;">Onboard Pressure Sensor</p>
-                    </div>
-                    <div style="border-left: 3px solid #ffe401; padding-left: 1.5rem;">
-                        <h3 style="color:#ffe401; font-size:1.125rem; margin-bottom:0.25rem; font-weight:600;">BMM350 - Magnetometer</h3>
-                        <p style="font-size:0.95rem; opacity:0.85;">Onboard  Compass</p>
-                    </div>
-
-                  
-                </div>
-                 
-            </div>               
-            
-        </div>
-    </div>
-
-    <!-- Slide 2 (last): Customer Support -->
-    <div class="hero-carousel-slide slide-dark slide-support" style="background-image: url('assets/edited/A1.png'); background-size: cover; background-position: center; color:#fff;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.72) 50%, rgba(0,0,0,0.55) 100%);"></div>
-        <div class="hero-slide-dark-inner">
-            <div>
-                <h2>24/7 After-Sales Support</h2>
-                <div class="slide-support-img-mobile">
-                    <img alt="Kitronix Support" src="assets/edited/A3edited.png" style="max-width:325px; height: fit-content; margin: 1rem auto; display:block;"/>
-                </div>
-                <p style="margin-bottom: 1.5rem;">Always-on expert support for troubleshooting, updates, and optimal hardware performance.</p>
-                <div style="margin-top: 1.5rem; display: flex; gap: 12px; flex-wrap: wrap;">
-                    <a href="mailto:kitronix240@gmail.com" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #ffe401; color: #000; font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 4px;">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
-                        Email Support
-                    </a>
-                    <a href="https://wa.me/917200275179?text=Hi%2C%20I%20need%20help%20with%20the%20Kite%20H7%20Flight%20Controller.%20Could%20you%20please%20assist%20me%3F" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 2px solid #ffe401; color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 4px;">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">chat</span>
-                        WhatsApp
-                    </a>
-                </div>
-            </div>
-            <div class="feature-image">
-                <img alt="Kitronix Support" src="assets/edited/A3.png"/>
-            </div>
-        </div>
-    </div>
-
-    <!-- Slide 3 (last): Hero (white) -->
-    <div class="hero-carousel-slide" style="background-image: url('assets/edited/FC1.png'); background-size: cover; background-position: center;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.65) 50%, rgba(0,0,0,0.35) 100%);"></div>
-        <div class="hero-container" style="position: relative; z-index: 2;">
-            <div class="hero-grid">
-                <div class="hero-content">
-                    <div>
-                        <p class="hero-description">
-                            The Kite H7 is a high-performance flight controller engineered for both hobbyists and professional UAV builders. Built on the powerful STM32H7 processor, it delivers unmatched reliability, precision, and versatility. Designed for custom firmware, Kite H7 adapts seamlessly to all your autonomous flight projects.
-                        </p>
-                    </div>
-                    <div class="hero-buttons">
-                        <a href="#contact" class="btn-primary">Contact Us</a>
-                        <a href="product.html" class="btn-secondary">SPECIFICATIONS</a>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="hero-stat"><p>Processor</p><p>STM32H7</p></div>
-                        <div class="hero-stat"><p>IMU Units</p><p>Dual IMU</p></div>
-                        <div class="hero-stat"><p>Frequency</p><p>480 MHz</p></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Controls -->
-    <button class="hero-slider-btn prev" id="heroPrev" aria-label="Previous">&lt;</button>
-    <button class="hero-slider-btn next" id="heroNext" aria-label="Next">&gt;</button>
-    <div class="hero-slider-dots" id="heroSliderDots">
-        <span class="hero-dot active" data-index="0"></span>
-        <span class="hero-dot" data-index="1"></span>
-        <span class="hero-dot" data-index="2"></span>
-        <span class="hero-dot" data-index="3"></span>
-        <!-- <span class="hero-dot" data-index="4"></span> -->
-    </div>
-
+  </div>
+  <div class="hero-media">
+    <img src="assets/edited/kite4.png" alt="KITE H7 flight controller board">
+  </div>
 </section>
 
-<!-- CTA Section: Enquire & Buy -->
-<section class="cta-strip">
-    <div class="cta-strip-accent"></div>
-    <div class="cta-strip-inner">
-        <div class="cta-strip-text">
-            <p>Get the Kite H7 for your next project — or reach out with any questions.</p>
-        </div>
-        <div class="cta-strip-buttons">
-            <a href="https://wa.me/917200275179?text=Hi%2C%20I%27m%20interested%20in%20the%20Kite%20H7%20Flight%20Controller" target="_blank" class="cta-strip-btn cta-strip-enquire">
-                <span class="material-symbols-outlined" style="font-size:18px;">mail</span>
-                Enquire
-            </a>   
-            <a href="product.html" class="cta-strip-btn cta-strip-buy">
-                <span class="material-symbols-outlined" style="font-size:18px;">shopping_cart_checkout</span>
-                Buy Now
-            </a>
-        </div>
+<!-- Performance -->
+<section class="perf" id="performance">
+  <div class="wrap">
+    <div class="perf-head">
+      <h2 class="display"><span class="hl">480 MHz</span> of headroom for your flight code.</h2>
+      <p class="lead">The STM32H753 runs demanding control loops and estimators in real time, with room left for whatever you build next.</p>
     </div>
+    <div class="perf-image">
+      <img src="assets/edited/kite6.png" alt="KITE H7 mounted in a build">
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <div class="fact-big">480<small>MHz</small></div>
+        <p>ARM Cortex‑M7 core on the STM32H753.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-big">1<small>MB RAM</small></div>
+        <p>Space for large buffers, logs and estimators.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-big">2<small>MB flash</small></div>
+        <p>Enough for full autopilot stacks and your own code.</p>
+      </div>
+      <div class="fact">
+        <div class="fact-big">3<small>stacks</small></div>
+        <p>Run custom firmware, ArduPilot or PX4.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Feature Section 1: Built for Performance -->
-<section class="feature-split-section feature-image-first">
-    <div class="feature-split-container">
-        <div class="feature-split-image">
-            <img src="assets/edited/A3edited.png" alt="Kite H7 Flight Controller" />
-        </div>
-        <div class="feature-split-content">
-            <h2 class="feature-split-title">Built for Performance</h2>
-            <div class="feature-split-divider"></div>
-            <p class="feature-split-desc">Powered by the STM32H753 running at 480&nbsp;MHz, the Kite H7 delivers the raw processing power required for demanding flight algorithms and real-time firmware execution — giving you the speed and reliability every serious build demands.</p>
-            <ul class="feature-split-list">
-                <li><span class="material-symbols-outlined">check_circle</span> ARM Cortex-M7 @ 480 MHz</li>
-                <li><span class="material-symbols-outlined">check_circle</span> 1 MB RAM &amp; 2 MB Flash</li>
-                <li><span class="material-symbols-outlined">check_circle</span> Custom Firmware Compatible</li>
-                <li><span class="material-symbols-outlined">check_circle</span> ArduPilot &amp; PX4 Ready</li>
-            </ul>
-        </div>
+<!-- Sensors -->
+<section class="sensors on-black" id="sensors">
+  <div class="wrap">
+    <div class="sensors-head">
+      <h2 class="display">Two IMUs.<br><span class="hl">One steady aircraft.</span></h2>
+      <p class="body">Redundant motion sensing, with a barometer and compass on board. Everything your firmware needs, on one board.</p>
     </div>
+
+    <div class="sensors-hero">
+      <img src="assets/edited/neon.png" alt="KITE H7 sensor layout">
+    </div>
+
+    <div class="feat-grid">
+      <div class="panel feat wide">
+        <div class="feat-icon"><span class="material-symbols-outlined">3d_rotation</span></div>
+        <div>
+          <h3>ICM‑42688 + BMI088</h3>
+          <p>Dual IMU. Two independent sensors, so one can back up the other.</p>
+        </div>
+      </div>
+      <div class="panel feat">
+        <div class="feat-icon"><span class="material-symbols-outlined">altitude</span></div>
+        <div>
+          <h3>BMP388</h3>
+          <p>Onboard barometer</p>
+        </div>
+      </div>
+      <div class="panel feat">
+        <div class="feat-icon"><span class="material-symbols-outlined">explore</span></div>
+        <div>
+          <h3>BMM350</h3>
+          <p>Onboard compass</p>
+        </div>
+      </div>
+      <div class="panel feat wide">
+        <div class="feat-icon"><span class="material-symbols-outlined">vibration</span></div>
+        <div>
+          <h3>Vibration‑damped mounting</h3>
+          <p>Sensors are isolated from frame vibration for cleaner readings.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Feature Section 2: Precision Sensing -->
-<section class="feature-split-section feature-split-alt">
-    <div class="feature-split-section feature-split-alt feature-section-2" style="background-color: #000;">
-            <div class="feature-split-container" >
-                <div class="feature-split-content" >
-                    <h2 class="feature-split-title" style="color: #ffffff;">Precision Sensing &amp; Control</h2>
-                    <div class="feature-split-divider"></div>
-                    <p class="feature-split-desc" style="color: #ffffff;">A dual-IMU architecture combining the ICM-42688 and BMI088 sensors provides redundant motion sensing, ensuring rock-solid stability even under extreme vibration loads. Onboard barometer and compass complete the picture.</p>
-                    <ul class="feature-split-list" style="color: #ffffff;">
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> ICM-42688 + BMI088 Dual IMU</li>
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> BMP388 Onboard Barometer</li>
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> BMM350 Onboard Compass</li>
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> Vibration-Damped Sensor Mounting</li>
-                    </ul>
-                </div>
-                <div class="feature-split-image">
-                    <img src="assets/edited/neon.png" alt="Kite H7 Sensors" />
-                </div>
-            </div>
+<!-- Ready to fly -->
+<section class="ready on-black" id="ready">
+  <div class="ready-head">
+    <h2 class="display">Not just a part.<br><span class="hl">A drone, ready to fly.</span></h2>
+    <p class="lead">Get KITE H7 on its own, or built into a complete drone, assembled around the board and ready for your mission.</p>
+  </div>
+
+  <div class="assemble" id="assemble">
+    <div class="assemble-stage">
+      <div class="a-copy">
+        <div class="a-steps">
+          <div class="a-step is-active">
+            <h3 class="title">It starts with KITE&nbsp;H7.</h3>
+            <p class="lead">The flight controller at the centre of every drone we build.</p>
+          </div>
+          <div class="a-step">
+            <h3 class="title">Then the frame.</h3>
+            <p class="lead">A rigid airframe built around the board.</p>
+          </div>
+          <div class="a-step">
+            <h3 class="title">Then the power.</h3>
+            <p class="lead">Motors wired straight to the controller.</p>
+          </div>
+          <div class="a-step">
+            <h3 class="title">Then it flies.</h3>
+            <p class="lead">Delivered assembled and ready for the mission.</p>
+          </div>
         </div>
+        <div class="a-dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span></div>
+      </div>
+
+      <div class="a-visual">
+        <svg viewBox="0 0 800 800" role="img" aria-label="KITE H7 flight controller assembling into a quadcopter drone">
+          <defs>
+            <radialGradient id="aGlow">
+              <stop offset="0" stop-color="#2997ff" stop-opacity="0.45"/>
+              <stop offset="1" stop-color="#2997ff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g id="aBob"><g id="aDrone">
+          <circle cx="400" cy="400" r="190" fill="url(#aGlow)"/>
+          
+          <g transform="rotate(-45 400 400)">
+            <g class="a-arm"><rect x="400" y="389" width="250" height="22" rx="11" fill="#2c2c2e" stroke="#3a3a3c" stroke-width="1.5"/></g>
+            <line class="a-trace" x1="470" y1="400" x2="614" y2="400"/>
+          </g>
+          <g transform="rotate(-135 400 400)">
+            <g class="a-arm"><rect x="400" y="389" width="250" height="22" rx="11" fill="#2c2c2e" stroke="#3a3a3c" stroke-width="1.5"/></g>
+            <line class="a-trace" x1="470" y1="400" x2="614" y2="400"/>
+          </g>
+          <g transform="rotate(135 400 400)">
+            <g class="a-arm"><rect x="400" y="389" width="250" height="22" rx="11" fill="#2c2c2e" stroke="#3a3a3c" stroke-width="1.5"/></g>
+            <line class="a-trace" x1="470" y1="400" x2="614" y2="400"/>
+          </g>
+          <g transform="rotate(45 400 400)">
+            <g class="a-arm"><rect x="400" y="389" width="250" height="22" rx="11" fill="#2c2c2e" stroke="#3a3a3c" stroke-width="1.5"/></g>
+            <line class="a-trace" x1="470" y1="400" x2="614" y2="400"/>
+          </g>
+          <g id="aPlate"><rect x="300" y="300" width="200" height="200" rx="44" fill="#161617" stroke="#2c2c2e" stroke-width="2"/></g>
+          
+          <g transform="translate(576.8 223.2)"><g class="a-motor">
+            <circle r="36" fill="#2c2c2e" stroke="#48484a" stroke-width="2"/>
+            <circle r="20" fill="#1d1d1f"/>
+            <circle r="5" fill="#86868b"/>
+          </g></g>
+          <g transform="translate(223.2 223.2)"><g class="a-motor">
+            <circle r="36" fill="#2c2c2e" stroke="#48484a" stroke-width="2"/>
+            <circle r="20" fill="#1d1d1f"/>
+            <circle r="5" fill="#86868b"/>
+          </g></g>
+          <g transform="translate(223.2 576.8)"><g class="a-motor">
+            <circle r="36" fill="#2c2c2e" stroke="#48484a" stroke-width="2"/>
+            <circle r="20" fill="#1d1d1f"/>
+            <circle r="5" fill="#86868b"/>
+          </g></g>
+          <g transform="translate(576.8 576.8)"><g class="a-motor">
+            <circle r="36" fill="#2c2c2e" stroke="#48484a" stroke-width="2"/>
+            <circle r="20" fill="#1d1d1f"/>
+            <circle r="5" fill="#86868b"/>
+          </g></g>
+          <g id="aBoard">
+            <rect x="330" y="330" width="140" height="140" rx="20" fill="#1d1d1f" stroke="#48484a" stroke-width="2"/>
+            <circle cx="346" cy="346" r="5" fill="#000" stroke="#48484a"/>
+            <circle cx="454" cy="346" r="5" fill="#000" stroke="#48484a"/>
+            <circle cx="346" cy="454" r="5" fill="#000" stroke="#48484a"/>
+            <circle cx="454" cy="454" r="5" fill="#000" stroke="#48484a"/>
+            <rect x="372" y="366" width="56" height="56" rx="7" fill="#2c2c2e" stroke="#3a3a3c"/>
+            <text x="400" y="400" text-anchor="middle" font-family="'Inter Tight', Arial, sans-serif" font-size="17" font-weight="700" fill="#86868b">H7</text>
+            <text x="400" y="444" text-anchor="middle" font-family="'Inter Tight', Arial, sans-serif" font-size="11" font-weight="600" letter-spacing="1" fill="#6e6e73">KITE H7</text>
+            <circle class="led" cx="440" cy="352" r="4" fill="#2997ff"/>
+          </g>
+          
+          <g transform="translate(576.8 223.2)"><g class="a-prop">
+            <circle class="prop-disc" r="115" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" stroke-width="1.5"/>
+            <g class="prop cw">
+              <ellipse rx="115" ry="9" fill="#f5f5f7"/>
+              <circle r="10" fill="#f5f5f7"/>
+            </g>
+          </g></g>
+          <g transform="translate(223.2 223.2)"><g class="a-prop">
+            <circle class="prop-disc" r="115" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" stroke-width="1.5"/>
+            <g class="prop ccw">
+              <ellipse rx="115" ry="9" fill="#f5f5f7"/>
+              <circle r="10" fill="#f5f5f7"/>
+            </g>
+          </g></g>
+          <g transform="translate(223.2 576.8)"><g class="a-prop">
+            <circle class="prop-disc" r="115" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" stroke-width="1.5"/>
+            <g class="prop cw">
+              <ellipse rx="115" ry="9" fill="#f5f5f7"/>
+              <circle r="10" fill="#f5f5f7"/>
+            </g>
+          </g></g>
+          <g transform="translate(576.8 576.8)"><g class="a-prop">
+            <circle class="prop-disc" r="115" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" stroke-width="1.5"/>
+            <g class="prop ccw">
+              <ellipse rx="115" ry="9" fill="#f5f5f7"/>
+              <circle r="10" fill="#f5f5f7"/>
+            </g>
+          </g></g>
+          </g></g>
+        </svg>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Technical Specifications Section -->
-<section id="specs" class="light-section">
-    <div class="section-container">
-        <div class="section-title">
-            <h2>Technical Specifications</h2>
-            <div class="section-divider"></div>
-        </div>
-        <div class="specs-grid">
-            <div class="spec-card">
-                <h3>Processor & Memory</h3>
-                <div>
-                    <div class="spec-item">
-                        <span class="spec-label">Main Processor</span>
-                        <span class="spec-value">STM32H753</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Architecture</span>
-                        <span class="spec-value">ARM Cortex-M7</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Clock Speed</span>
-                        <span class="spec-value">480 MHz</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">RAM</span>
-                        <span class="spec-value">1 MB</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Flash Storage</span>
-                        <span class="spec-value">2 MB</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Missions -->
+<section class="missions" id="missions">
+  <div class="wrap">
+    <div class="missions-head">
+      <h2 class="display">One brain. <span class="hl">Every mission.</span></h2>
+      <p class="lead">Tell us the job. We build the drone around KITE H7.</p>
     </div>
+    <div class="mission-grid">
+      <div class="mission">
+        <div class="mission-icon"><span class="material-symbols-outlined">agriculture</span></div>
+        <div><h3>Crop spraying</h3><p>Even, repeatable passes over the field.</p></div>
+      </div>
+      <div class="mission">
+        <div class="mission-icon"><span class="material-symbols-outlined">videocam</span></div>
+        <div><h3>Surveillance</h3><p>Steady hover for clear footage.</p></div>
+      </div>
+      <div class="mission">
+        <div class="mission-icon"><span class="material-symbols-outlined">inventory_2</span></div>
+        <div><h3>Logistics</h3><p>Carry payloads from point to point.</p></div>
+      </div>
+      <div class="mission">
+        <div class="mission-icon"><span class="material-symbols-outlined">build</span></div>
+        <div><h3>Your airframe</h3><p>A custom build for a mission of your own.</p></div>
+      </div>
+    </div>
+    <div class="hero-ctas">
+      <a class="btn" href="#contact">Get a ready‑to‑fly drone</a>
+      <a class="btn btn-ghost" href="product.html">Buy the board only</a>
+    </div>
+  </div>
 </section>
 
-<!-- Gallery Section -->
-<section id="gallery" class="light-section" style="background-color: var(--surface-light); border-top: 1px solid var(--tech-border);">
-    <div class="section-container">
-        <div class="section-title">
-            <h2>Product Gallery</h2>
-            <div class="section-divider"></div>
+<!-- Tech specs -->
+<section class="specs" id="specs">
+  <div class="wrap">
+    <h2 class="display">Tech specs</h2>
+    <div class="spec-table">
+      <div class="spec-row">
+        <h3>Processor and memory</h3>
+        <div class="spec-items">
+          <div><div class="spec-k">Main processor</div><div class="spec-v">STM32H753</div></div>
+          <div><div class="spec-k">Architecture</div><div class="spec-v">ARM Cortex‑M7</div></div>
+          <div><div class="spec-k">Clock speed</div><div class="spec-v">480 MHz</div></div>
+          <div><div class="spec-k">RAM</div><div class="spec-v">1 MB</div></div>
+          <div><div class="spec-k">Flash</div><div class="spec-v">2 MB</div></div>
         </div>
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img alt="Kite H7 - View 1" src="assets/edited/A1.png"/>
-            </div>
-            <div class="gallery-item">
-                <img alt="Kite H7 - View 2" src="assets/edited/A2.png"/>
-            </div>
-            <div class="gallery-item">
-                <img alt="Kite H7 - View 3" src="assets/edited/A5.png"/>
-            </div>
+      </div>
+      <div class="spec-row">
+        <h3>Sensors</h3>
+        <div class="spec-items">
+          <div><div class="spec-k">IMU 1</div><div class="spec-v">ICM‑42688</div><div class="spec-k">±16 g, ±2000 dps</div></div>
+          <div><div class="spec-k">IMU 2</div><div class="spec-v">BMI088</div><div class="spec-k">±24 g, ±2000 dps</div></div>
+          <div><div class="spec-k">Barometer</div><div class="spec-v">BMP388</div></div>
+          <div><div class="spec-k">Magnetometer</div><div class="spec-v">BMM350</div></div>
         </div>
+      </div>
+      <div class="spec-row">
+        <h3>Firmware</h3>
+        <div class="spec-items">
+          <div><div class="spec-k">Custom firmware</div><div class="spec-v">Supported</div></div>
+          <div><div class="spec-k">ArduPilot</div><div class="spec-v">Ready</div></div>
+          <div><div class="spec-k">PX4</div><div class="spec-v">Ready</div></div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<!-- Support & Download Section -->
-<section id="support" class="light-section">
-    <div class="section-container">
-        <div class="section-title">
-            <h2>Support & Resources</h2>
-            <div class="section-divider"></div>
-        </div>
-        <div class="support-grid">
-            <div class="support-card">
-                <div class="support-icon">
-                    <span class="material-symbols-outlined" style="font-size: 4rem;">description</span>
-                </div>
-                <h3>User Manual</h3>
-                <p>Complete installation and operation guide</p>
-                <a href="#" class="support-link">
-                    Download PDF
-                    <span class="material-symbols-outlined">download</span>
-                </a>
-            </div>
-            <a href="https://www.youtube.com/@kitronix" target="_blank" class="support-card">
-                <div class="support-icon">
-                    <span class="material-symbols-outlined" style="font-size: 4rem;">forum</span>
-                </div>
-                <h3>Community</h3>
-                <p>Know more about us here</p>
-                <div class="support-link">
-                    Visit Forum
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </div>
-            </a>
-        </div>
+<!-- Gallery -->
+<section class="gallery" id="gallery">
+  <div class="wrap gallery-head">
+    <h2 class="display">Every angle.</h2>
+    <div class="gallery-ctrls">
+      <button class="round-btn" id="railPrev" aria-label="Previous image"><span class="material-symbols-outlined">chevron_left</span></button>
+      <button class="round-btn" id="railNext" aria-label="Next image"><span class="material-symbols-outlined">chevron_right</span></button>
     </div>
+  </div>
+  <div class="rail" id="rail">
+    <figure><img src="assets/edited/kite7.png" alt="KITE H7, view 1" loading="lazy"></figure>
+    <figure><img src="assets/edited/kite6.png" alt="KITE H7, view 2" loading="lazy"></figure>
+    <figure><img src="assets/edited/kite5.png" alt="KITE H7, view 3" loading="lazy"></figure>
+    <figure class="photo"><img src="assets/edited/kite1.jpeg" alt="KITE H7 in use" loading="lazy"></figure>
+  </div>
 </section>
 
-<!-- Contact Section -->
-<section id="contact" class="light-section" style="background-color: var(--surface-light); border-top: 1px solid var(--tech-border);">
-    <div class="section-container" style="max-width: 900px;">
-        <div class="section-title">
-            <h2>Contact Us</h2>
-            <div class="section-divider"></div>
-            <p class="section-description">
-                Interested in the KITE H7? Get in touch with our sales team or <a href="https://wa.me/917200275179?text=Hi%2C%20I%27m%20interested%20in%20the%20Kite%20H7%20Flight%20Controller" target="_blank" style="color: var(--primary); font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--primary);">purchase now</a>
-            </p>
-        </div>
-        <div class="contact-form">
-            <form id="contactForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label" for="name">Name</label>
-                        <input class="form-input" id="name" name="name" placeholder="Your name" type="text" required/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
-                        <input class="form-input" id="email" name="email" placeholder="your@email.com" type="email" required/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="company">Company</label>
-                    <input class="form-input" id="company" name="company" placeholder="Your company" type="text"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="message">Message</label>
-                    <textarea class="form-textarea" id="message" name="message" placeholder="Tell us about your project..."></textarea>
-                </div>
-                <button class="btn-submit" id="contactSubmitBtn" type="submit">
-                    SEND MESSAGE
-                    <span class="material-symbols-outlined">send</span>
-                </button>
-                <div id="contactFormStatus" style="display:none; padding: 0.875rem 1.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; text-align: center;"></div>
-            </form>
-        </div>
+<!-- Support -->
+<section class="support on-black" id="support">
+  <div class="wrap support-grid">
+    <div>
+      <h2 class="display">Help, <span class="hl">any hour.</span></h2>
+      <p class="lead" style="margin-top:18px;">After‑sales support around the clock for troubleshooting, updates and getting the most out of your hardware.</p>
     </div>
+    <ul class="support-links">
+      <li>
+        <a href="#"><!-- TODO: link the user manual PDF -->
+          <span class="material-symbols-outlined">description</span>
+          <span><strong>User manual</strong><span class="desc">Installation and operation guide (PDF)</span></span>
+          <span class="material-symbols-outlined go">download</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://wa.me/917904198076?text=Hi%2C%20I%20need%20help%20with%20my%20KITE%20H7%20flight%20controller." target="_blank" rel="noopener">
+          <span class="material-symbols-outlined">chat</span>
+          <span><strong>Chat on WhatsApp</strong><span class="desc">+91 79041 98076</span></span>
+          <span class="material-symbols-outlined go">arrow_forward</span>
+        </a>
+      </li>
+      <li>
+        <a href="#contact">
+          <span class="material-symbols-outlined">support_agent</span>
+          <span><strong>Talk to an engineer</strong><span class="desc">Troubleshooting, tuning and firmware questions</span></span>
+          <span class="material-symbols-outlined go">arrow_forward</span>
+        </a>
+      </li>
+      <li>
+        <a href="#specs">
+          <span class="material-symbols-outlined">memory</span>
+          <span><strong>Tech specs</strong><span class="desc">Processor, memory, sensors and firmware</span></span>
+          <span class="material-symbols-outlined go">arrow_forward</span>
+        </a>
+      </li>
+    </ul>
+  </div>
 </section>
+
+<!-- Contact -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="contact-inner">
+      <h2 class="display">Tell us about your build.</h2>
+      <p class="lead">Questions, bulk orders or custom work. We usually reply within a day.</p>
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@company.com" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="company">Company <span style="opacity:.7">(optional)</span></label>
+          <input id="company" name="company" type="text" placeholder="Company name" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="What are you building?"></textarea>
+        </div>
+        <div class="form-foot">
+          <span class="form-status" id="contactFormStatus" role="status" aria-live="polite"></span>
+          <button class="btn" id="contactSubmitBtn" type="submit">Send message</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Visit / Address -->
+<section class="visit" id="visit">
+  <div class="wrap visit-grid">
+    <div>
+      <h2 class="display">Come see it <span class="hl">in person.</span></h2>
+      <address class="address">
+        <strong>KITE H7</strong>
+        6th Ave, Sarvamangala Colony<br>
+        Krupa Colony, Ashok Nagar<br>
+        Chennai, Tamil Nadu 600083<br>
+        India
+      </address>
+      <div class="hero-ctas">
+        <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=6th+Ave,+Sarvamangala+Colony,+Krupa+Colony,+Ashok+Nagar,+Chennai,+Tamil+Nadu+600083" target="_blank" rel="noopener">Get directions</a>
+        <a class="btn btn-ghost" href="#contact">Book a visit</a>
+      </div>
+    </div>
+    <div class="map">
+      <iframe
+        title="Map showing KITE H7, Ashok Nagar, Chennai"
+        src="https://www.google.com/maps?q=6th+Ave,+Sarvamangala+Colony,+Krupa+Colony,+Ashok+Nagar,+Chennai,+Tamil+Nadu+600083&z=16&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final on-black">
+  <h2 class="display">Your next build <span class="hl">starts here.</span></h2>
+  <div class="hero-ctas">
+    <a class="btn" href="product.html">Buy now</a>
+    <a class="btn btn-ghost" href="#contact">Enquire</a>
+  </div>
+</section>
+
+</main>
 
 <!-- Footer -->
 <footer>
-    <div class="footer-container">
-        <div class="footer-grid">
-            <div class="footer-section">
-                <a class="logo" href="#" style="margin-bottom: 1rem;">
-                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 24px;">rocket_launch</span>
-                    <span style="font-size: 1.125rem; font-weight: 700; color: var(--text-charcoal);">KITE H7 <span style="color: var(--primary);"></span></span>
-                </a>
-                <p class="footer-desc">
-                    Professional-grade flight control systems for mission-critical applications.
-                </p>
-                <div class="social-links">
-                    <a href="#" aria-label="GitHub">
-                        <span class="material-symbols-outlined">hub</span>
-                    </a>
-                    <a href="#" aria-label="Documentation">
-                        <span class="material-symbols-outlined">description</span>
-                    </a>
-                    <a href="https://www.youtube.com/@kitronix" target="_blank" aria-label="Community">
-                        <span class="material-symbols-outlined">groups</span>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-section">
-                <h4>Product</h4>
-                <ul>
-                    <li><a href="#overview">Overview</a></li>
-                    <li><a href="#specs">Specifications</a></li>
-                    <li><a href="#gallery">Gallery</a></li>
-                    <li><a href="product.html" style="color: var(--primary); font-weight: 700;">Purchase</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="#support">Documentation</a></li>
-                    <li><a href="#support">Firmware</a></li>
-                    <li><a href="#support">Community Forum</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                    <li><a href="#">Careers</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 Kite H7. All rights reserved.</p>
-            <!-- <p>Designed for Professional UAV Applications</p> -->
-        </div>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <strong>KITE H7</strong>
+        <p>Flight controllers for professional UAV builders.</p>
+        <p style="margin-top:10px;">6th Ave, Ashok Nagar, Chennai 600083</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#performance">Performance</a></li>
+          <li><a href="#specs">Tech specs</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="product.html">Buy</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#support">User manual</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#visit">Visit us</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Terms of service</a></li>
+        </ul>
+      </div>
     </div>
+    <div class="foot-bottom">© 2026 KITE H7. All rights reserved.</div>
+  </div>
 </footer>
 
 <script>
-    // Mobile menu toggle for index page
-    const mobileMenuBtnIndex = document.getElementById('mobileMenuBtnIndex');
-    const mainNavIndex = document.getElementById('mainNavIndex');
-    
-    if (mobileMenuBtnIndex) {
-        mobileMenuBtnIndex.addEventListener('click', () => {
-            mainNavIndex.classList.toggle('active');
-            const icon = mobileMenuBtnIndex.querySelector('.material-symbols-outlined');
-            icon.textContent = mainNavIndex.classList.contains('active') ? 'close' : 'menu';
-        });
-    }
+/* Nav: border on scroll + mobile menu */
+(function () {
+  var nav = document.getElementById('nav');
+  var btn = document.getElementById('menuBtn');
+  var links = document.getElementById('navLinks');
 
-    // Close mobile menu when clicking nav links
-    const navLinksIndex = mainNavIndex.querySelectorAll('a');
-    navLinksIndex.forEach(link => {
-        link.addEventListener('click', () => {
-            mainNavIndex.classList.remove('active');
-            const icon = mobileMenuBtnIndex.querySelector('.material-symbols-outlined');
-            icon.textContent = 'menu';
-        });
+  function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 8); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  function setOpen(open) {
+    nav.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open);
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    btn.querySelector('span').textContent = open ? 'close' : 'menu';
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  btn.addEventListener('click', function () { setOpen(!nav.classList.contains('open')); });
+  links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 833) setOpen(false); });
+})();
+
+/* Hero copy eases away as you scroll */
+(function () {
+  var copy = document.getElementById('heroCopy');
+  if (!copy || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var y = Math.min(window.scrollY, 700);
+      copy.style.opacity = String(Math.max(0, 1 - y / 520));
+      copy.style.transform = 'translateY(' + (y * 0.25) + 'px)';
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+
+/* Ready to fly: scroll-driven assembly */
+(function () {
+  var sec = document.getElementById('assemble');
+  if (!sec) return;
+  var stage = sec.querySelector('.assemble-stage');
+  var board = document.getElementById('aBoard');
+  var plate = document.getElementById('aPlate');
+  var drone = document.getElementById('aDrone');
+  var arms = sec.querySelectorAll('.a-arm');
+  var traces = sec.querySelectorAll('.a-trace');
+  var motors = sec.querySelectorAll('.a-motor');
+  var props = sec.querySelectorAll('.a-prop');
+  var steps = sec.querySelectorAll('.a-step');
+  var dots = sec.querySelectorAll('.a-dots span');
+
+  function clamp(v) { return Math.max(0, Math.min(1, v)); }
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+  function around(s) { return 'translate(400 400) scale(' + s + ') translate(-400 -400)'; }
+
+  var lastStep = -1;
+  function render(p) {
+    var bs = 1.7 - 0.7 * ease(clamp(p / 0.2));
+    board.setAttribute('transform', around(bs));
+
+    var t1 = ease(clamp((p - 0.2) / 0.15));
+    plate.setAttribute('opacity', t1);
+    plate.setAttribute('transform', around(0.85 + 0.15 * t1));
+
+    var ta = ease(clamp((p - 0.26) / 0.18));
+    arms.forEach(function (a) { a.setAttribute('transform', 'translate(400 400) scale(' + ta + ' 1) translate(-400 -400)'); });
+
+    var tm = ease(clamp((p - 0.47) / 0.14));
+    motors.forEach(function (m) { m.setAttribute('transform', 'scale(' + tm + ')'); });
+
+    var tt = clamp((p - 0.55) / 0.14);
+    traces.forEach(function (l) { l.style.strokeDashoffset = 144 * (1 - tt); });
+
+    var tp = ease(clamp((p - 0.72) / 0.12));
+    props.forEach(function (g) { g.setAttribute('transform', 'rotate(' + (-120 * (1 - tp)) + ') scale(' + tp + ')'); });
+
+    var tf = ease(clamp((p - 0.86) / 0.12));
+    drone.setAttribute('transform', 'translate(400 ' + (400 - 28 * tf) + ') scale(' + (1 + 0.04 * tf) + ') translate(-400 -400)');
+    sec.classList.toggle('flying', p > 0.9);
+
+    var step = p < 0.24 ? 0 : p < 0.46 ? 1 : p < 0.7 ? 2 : 3;
+    if (step !== lastStep) {
+      steps.forEach(function (el, i) { el.classList.toggle('is-active', i === step); });
+      dots.forEach(function (el, i) { el.classList.toggle('on', i === step); });
+      lastStep = step;
+    }
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    sec.classList.add('static');
+    render(1);
+    sec.classList.remove('flying');
+    return;
+  }
+
+  function progress() {
+    var r = sec.getBoundingClientRect();
+    var travel = r.height - stage.offsetHeight;
+    return travel > 0 ? clamp((52 - r.top) / travel) : 0;
+  }
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { render(progress()); ticking = false; });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  render(progress());
+})();
+
+/* Gallery arrows */
+(function () {
+  var rail = document.getElementById('rail');
+  var prev = document.getElementById('railPrev');
+  var next = document.getElementById('railNext');
+  if (!rail) return;
+  function step() { var f = rail.querySelector('figure'); return f ? f.offsetWidth + 20 : 400; }
+  function update() {
+    prev.disabled = rail.scrollLeft <= 4;
+    next.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+  }
+  prev.addEventListener('click', function () { rail.scrollBy({ left: -step(), behavior: 'smooth' }); });
+  next.addEventListener('click', function () { rail.scrollBy({ left: step(), behavior: 'smooth' }); });
+  rail.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* Theme toggle (light / dark) */
+(function () {
+  var btn = document.getElementById('themeToggleBtn');
+  var icon = document.getElementById('themeToggleIcon');
+  var html = document.documentElement;
+
+  function apply(theme) {
+    html.setAttribute('data-theme', theme);
+    icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+  }
+  apply(html.getAttribute('data-theme') || 'light');
+
+  btn.addEventListener('click', function () {
+    var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('kiteh7-theme', next); } catch (e) {}
+    apply(next);
+  });
+})();
+
+/* Contact form → Google Sheets (Apps Script) */
+(function () {
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrwusz4NQMGzJ3lSgJfeQjDi6f46Hv3zquNbRNoWMnG7T2a8L5xbrnxss0R9OTeMTH/exec';
+  var form = document.getElementById('contactForm');
+  var btn = document.getElementById('contactSubmitBtn');
+  var status = document.getElementById('contactFormStatus');
+  if (!form) return;
+
+  function show(msg, kind) { status.textContent = msg; status.className = 'form-status ' + (kind || ''); }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = form.name.value.trim();
+    var email = form.email.value.trim();
+    if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      show('Add your name and a valid email to send.', 'err');
+      return;
+    }
+    if (!SCRIPT_URL) { show('Form isn’t connected yet. Set SCRIPT_URL in index.html.', 'err'); return; }
+
+    var payload = new URLSearchParams({
+      name: name,
+      email: email,
+      company: form.company.value.trim(),
+      message: form.message.value.trim(),
+      date: new Date().toLocaleString()
     });
 
-    // Mobile navbar scroll behavior
-    let lastScrollTop = 0;
-    const header = document.querySelector('header');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    show('');
 
-    function handleScroll() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        // Show navbar when scrolling up, hide when scrolling down
-        if (scrollTop > lastScrollTop) {
-            // Scrolling down
-            header.classList.remove('mobile-visible');
-        } else {
-            // Scrolling up
-            header.classList.add('mobile-visible');
-        }
-
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-    }
-
-    // Only apply on mobile/tablet
-    function checkMobile() {
-        if (window.innerWidth <= 1024) {
-            window.addEventListener('scroll', handleScroll);
-            handleScroll(); // Initial check
-        } else {
-            window.removeEventListener('scroll', handleScroll);
-            header.classList.remove('mobile-visible');
-        }
-    }
-
-    window.addEventListener('resize', checkMobile);
-    checkMobile(); // Initial check
-
-    // ── Hero Carousel ─────────────────────────────────────────────
-    (function () {
-        const carousel  = document.querySelector('.hero-carousel');
-        const slides    = Array.from(carousel.querySelectorAll('.hero-carousel-slide'));
-        const dots      = Array.from(document.querySelectorAll('.hero-dot'));
-        const TOTAL     = slides.length;
-        let current     = 0;
-        let autoTimer   = null;
-        let busy        = false;
-        const isDesktop = () => window.innerWidth > 768;
-
-        // Arrow buttons: remove from DOM on mobile, wire up on desktop
-        const prevBtn = document.getElementById('heroPrev');
-        const nextBtn = document.getElementById('heroNext');
-        if (!isDesktop()) {
-            if (prevBtn) prevBtn.remove();
-            if (nextBtn) nextBtn.remove();
-        }
-
-        // Equalize carousel height to the tallest slide
-        function equalizeHeight() {
-            slides.forEach(s => {
-                s.style.transition  = 'none';
-                s.style.position    = 'static';
-                s.style.transform   = 'none';
-                s.style.visibility  = 'hidden';
-                s.style.zIndex      = '0';
-            });
-            let maxH = 0;
-            slides.forEach(s => { maxH = Math.max(maxH, s.offsetHeight); });
-            carousel.style.minHeight = maxH + 'px';
-            slides.forEach((s, i) => {
-                s.style.position   = 'absolute';
-                s.style.top        = '0';
-                s.style.left       = '0';
-                s.style.width      = '100%';
-                s.style.height     = '100%';
-                s.style.visibility = '';
-                s.style.transform  = i === current ? 'translateX(0)' : 'translateX(100%)';
-                s.style.zIndex     = i === current ? '1' : '0';
-            });
-        }
-
-        // Initialize: first slide visible, rest parked off-screen to the right
-        slides.forEach((s, i) => {
-            s.style.transition = 'none';
-            s.style.transform  = i === 0 ? 'translateX(0)' : 'translateX(100%)';
-            s.style.zIndex     = i === 0 ? '1' : '0';
-        });
-
-        equalizeHeight();
-        window.addEventListener('resize', equalizeHeight);
-
-        function updateDots(idx) {
-            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-        }
-
-        // dir: +1 = incoming slide comes from right (forward)
-        //      -1 = incoming slide comes from left (backward)
-        // dur: optional CSS duration string (fast for manual, slow for auto)
-        function goTo(newIdx, dir, dur) {
-            if (busy || newIdx === current) return;
-            busy = true;
-
-            dur = dur || '2.0s';
-            const ms = Math.round(parseFloat(dur) * 1000) + 50;
-
-            const outSlide = slides[current];
-            const inSlide  = slides[newIdx];
-
-            inSlide.style.transition = 'none';
-            inSlide.style.zIndex     = '2';
-            inSlide.style.transform  = dir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
-
-            inSlide.getBoundingClientRect(); // force reflow
-
-            inSlide.style.transition  = `transform ${dur} cubic-bezier(0.4,0,0.2,1)`;
-            outSlide.style.transition = `transform ${dur} cubic-bezier(0.4,0,0.2,1)`;
-
-            inSlide.style.transform  = 'translateX(0)';
-            outSlide.style.transform = dir > 0 ? 'translateX(-100%)' : 'translateX(100%)';
-
-            setTimeout(() => {
-                outSlide.style.transition = 'none';
-                outSlide.style.transform  = dir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
-                outSlide.style.zIndex     = '0';
-                inSlide.style.zIndex      = '1';
-                current = newIdx;
-                updateDots(current);
-                busy = false;
-            }, ms);
-        }
-
-        function next(dur) {
-            goTo(current === TOTAL - 1 ? 0 : current + 1, +1, dur);
-        }
-
-        function prev(dur) {
-            goTo((current - 1 + TOTAL) % TOTAL, -1, dur);
-        }
-
-        function startAuto() {
-            clearInterval(autoTimer);
-            autoTimer = setInterval(() => next(), 22000);
-        }
-
-        // Arrow buttons — desktop only
-        if (isDesktop()) {
-            nextBtn.addEventListener('click', () => { next('0.25s'); startAuto(); });
-            prevBtn.addEventListener('click', () => { prev('0.25s'); startAuto(); });
-            carousel.addEventListener('mouseenter', () => clearInterval(autoTimer));
-            carousel.addEventListener('mouseleave', startAuto);
-        }
-
-        // Dot navigation
-        dots.forEach(d => d.addEventListener('click', () => {
-            const idx = +d.dataset.index;
-            goTo(idx, idx > current ? +1 : -1, '0.25s');
-            startAuto();
-        }));
-
-        // Touch / mouse swipe
-        let startX = 0, isDragging = false;
-        carousel.addEventListener('mousedown',  e => { isDragging = true; startX = e.clientX; });
-        carousel.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-        window.addEventListener('mouseup', e => {
-            if (!isDragging) return;
-            isDragging = false;
-            const diff = startX - e.clientX;
-            if (Math.abs(diff) > 50) { diff > 0 ? next('0.25s') : prev('0.25s'); startAuto(); }
-        });
-        carousel.addEventListener('touchend', e => {
-            const diff = startX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 50) { diff > 0 ? next('0.25s') : prev('0.25s'); startAuto(); }
-        });
-
-        startAuto();
-    })();
-</script>
-
-<!-- ─── Google Sheets Contact Form Integration ─── -->
-<script>
-(function () {
-    // ⚠️  Paste your deployed Google Apps Script web-app URL here:
-    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrwusz4NQMGzJ3lSgJfeQjDi6f46Hv3zquNbRNoWMnG7T2a8L5xbrnxss0R9OTeMTH/exec';
-
-    var form       = document.getElementById('contactForm');
-    var submitBtn  = document.getElementById('contactSubmitBtn');
-    var statusBox  = document.getElementById('contactFormStatus');
-
-    function showStatus(message, isSuccess) {
-        statusBox.textContent = message;
-        statusBox.style.display = 'block';
-        if (isSuccess) {
-            statusBox.style.background = 'rgba(34,197,94,0.12)';
-            statusBox.style.color      = '#16a34a';
-            statusBox.style.border     = '1px solid rgba(34,197,94,0.3)';
-        } else {
-            statusBox.style.background = 'rgba(239,68,68,0.12)';
-            statusBox.style.color      = '#dc2626';
-            statusBox.style.border     = '1px solid rgba(239,68,68,0.3)';
-        }
-    }
-
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            if (!SCRIPT_URL || !SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbxrwusz4NQMGzJ3lSgJfeQjDi6f46Hv3zquNbRNoWMnG7T2a8L5xbrnxss0R9OTeMTH/exec')) {
-                showStatus('Google Sheets not connected yet. Please set the SCRIPT_URL in index.html.', false);
-                return;
-            }
-
-            // Collect form data
-            var payload = new URLSearchParams({
-                name   : document.getElementById('name').value.trim(),
-                email  : document.getElementById('email').value.trim(),
-                company: document.getElementById('company').value.trim(),
-                message: document.getElementById('message').value.trim(),
-                date   : new Date().toLocaleString()
-            });
-
-            // Disable button while submitting
-            submitBtn.disabled    = true;
-            submitBtn.textContent = 'Sending…';
-
-            fetch(SCRIPT_URL, {
-                method : 'POST',
-                mode   : 'no-cors',          // Apps Script requires no-cors from external origins
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body   : payload.toString()
-            })
-            .then(function () {
-                showStatus('Message sent! We will get back to you shortly.', true);
-                form.reset();
-            })
-            .catch(function () {
-                showStatus('Something went wrong. Please email us directly.', false);
-            })
-            .finally(function () {
-                submitBtn.disabled    = false;
-                submitBtn.innerHTML   = 'SEND MESSAGE <span class="material-symbols-outlined">send</span>';
-            });
-        });
-    }
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: payload.toString()
+    })
+    .then(function () { show('Message sent. We’ll get back to you soon.', 'ok'); form.reset(); })
+    .catch(function () { show('Couldn’t send. Check your connection and try again.', 'err'); })
+    .finally(function () { btn.disabled = false; btn.textContent = 'Send message'; });
+  });
 })();
 </script>
-
-<!-- ─── Smooth Scroll for Nav Links ─── -->
-<script>
-(function () {
-    document.querySelectorAll('a[href^="#"]').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            var href = link.getAttribute('href');
-            if (!href || href === '#') return;
-            var target = document.querySelector(href);
-            if (!target) return;
-            e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    });
-})();
-</script>
-
-<!-- Theme Toggle -->
-<script>
-(function () {
-    var btn = document.getElementById('themeToggleBtn');
-    var icon = document.getElementById('themeToggleIcon');
-    var logo = document.getElementById('siteLogo');
-    var html = document.documentElement;
-
-    var LOGO_LIGHT = 'assets/edited/Kitronix.png';
-    var LOGO_DARK  = 'assets/edited/Logo2.png';
-
-    function applyTheme(theme) {
-        html.setAttribute('data-theme', theme);
-        icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
-        if (logo) logo.src = theme === 'dark' ? LOGO_DARK : LOGO_LIGHT;
-    }
-
-    // Apply saved theme on load
-    var saved = localStorage.getItem('kitronix-theme') || 'light';
-    applyTheme(saved);
-
-    btn.addEventListener('click', function () {
-        var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        localStorage.setItem('kitronix-theme', next);
-        applyTheme(next);
-    });
-})();
-</script>
-
 </body>
 </html>
