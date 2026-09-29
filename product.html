@@ -1,1883 +1,949 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitronix - Purchase | Advanced Flight Controller</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('kitronix-theme') || 'light');</script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <style>
-        .breadcrumb {
-            display: flex;
-            gap: 8px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 32px;
-        }
-        .breadcrumb a {
-            color: var(--text-dark);
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-        .breadcrumb a:hover {
-            opacity: 1;
-            color: var(--primary);
-        }
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .product-images {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        .main-image {
-            width: 100%;
-            aspect-ratio: 1;
-            overflow: hidden;
-            background: transparent;
-            border: none;
-            position: relative;
-            transition: all 0.4s ease;
-        }
-        .main-image:hover {
-            box-shadow: none;
-        }
-        .main-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-        .main-image:hover img {
-            transform: scale(1.08);
-        }
-        .thumbnail-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
-        }
-        .thumbnail {
-            aspect-ratio: 1;
-            border: none;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        .thumbnail::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent, rgba(212, 168, 0, 0.15));
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-        .thumbnail:hover::before {
-            opacity: 1;
-        }
-        .thumbnail:hover, .thumbnail.active {
-            border: 2px solid var(--primary);
-            transform: scale(1.1);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        }
-        .thumbnail.active {
-            border-width: 2px;
-        }
-        .thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s;
-        }
-        .thumbnail:hover img {
-            transform: scale(1.1);
-        }
-        .product-info {
-            position: sticky;
-            top: 100px;
-        }
-        .product-header {
-            border-bottom: 2px solid var(--tech-border);
-            padding-bottom: 24px;
-            margin-bottom: 24px;
-        }
-        .product-tag {
-            color: var(--primary);
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-        .product-title {
-            font-size: 48px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -0.02em;
-            color: var(--text-charcoal);
-            margin-bottom: 16px;
-        }
-        .price-section {
-            display: flex;
-            align-items: baseline;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-        .quantity-cart {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-            align-items: stretch;
-        }
-        .quantity-selector {
-            display: flex;
-            border: 2px solid var(--tech-border);
-            background: var(--surface-light);
-        }
-        .qty-btn {
-            width: 48px;
-            height: 100%;
-            min-height: 52px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            color: var(--text-dark);
-            transition: all 0.3s ease;
-        }
-        .qty-btn:hover {
-            background: var(--primary-ultra-light);
-            color: var(--primary);
-            transform: scale(1.1);
-        }
-        .qty-btn:active {
-            transform: scale(0.95);
-        }
-        .qty-input {
-            width: 48px;
-            text-align: center;
-            border: none;
-            background: transparent;
-            font-weight: 900;
-            color: var(--text-charcoal);
-        }
-        .add-to-cart {
-            flex: 1;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: var(--surface-light);
-            border: none;
-            padding: 16px 32px;
-            font-size: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-        .add-to-cart::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        .add-to-cart:hover::before {
-            width: 400px;
-            height: 400px;
-        }
-        .add-to-cart:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 8px 15px rgba(0, 0, 0, 0.08);
-        }
-        .add-to-cart:active {
-            transform: translateY(-1px);
-        }
-        .wishlist-btn {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid var(--tech-border);
-            background: transparent;
-            color: var(--text-dark);
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 32px;
-            position: relative;
-        }
-        .wishlist-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transform: translateX(-50%);
-            transition: width 0.4s;
-        }
-        .wishlist-btn:hover::after {
-            width: 90%;
-        }
-        .wishlist-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: var(--primary-ultra-light);
-            transform: translateY(-2px);
-        }
-        .specs-section {
-            max-width: 1400px;
-            margin: 80px auto;
-        }
-        .section-title {
-            font-size: 36px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -0.02em;
-            margin-bottom: 32px;
-            color: var(--text-charcoal);
-        }
-        .specs-table {
-            width: 100%;
-            border: 2px solid var(--tech-border);
-            background: var(--surface-light);
-        }
-        .specs-table tr {
-            border-bottom: 1px solid var(--tech-border);
-            transition: all 0.3s ease;
-        }
-        .specs-table tr:hover {
-            background: var(--primary-ultra-light) !important;
-            transform: translateX(5px);
-        }
-        .specs-table tr:last-child {
-            border-bottom: none;
-        }
-        .specs-table tr:nth-child(even) {
-            background: var(--tech-grey-light);
-        }
-        .specs-table td {
-            padding: 24px;
-            font-size: 13px;
-        }
-        .specs-table td:first-child {
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-charcoal);
-            width: 33%;
-        }
-        .specs-table td:last-child {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-        @media (max-width: 1024px) {
-            .product-grid {
-                grid-template-columns: 1fr;
-                gap: 32px;
-            }
-            .product-info {
-                position: static;
-            }
-            .specs-section {
-                margin: 60px auto;
-            }
-        }
-        @media (min-width: 1025px) {
-            .main-nav {
-                margin-left: auto !important;
-            }
-            .header-actions {
-                margin-left: 0;
-            }
-        }
-        @media (max-width: 768px) {
-            .header-container {
-                padding: 0 16px;
-                height: 72px;
-            }
-            header .logo img {
-                height: 64px !important;
-                width: 64px !important;
-            }
-            .main-nav {
-                display: none;
-                position: fixed;
-                top: 72px;
-                left: 0;
-                right: 0;
-                background: #ffffff;
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                z-index: 100;
-                gap: 0;
-            }
-            .main-nav.active {
-                display: flex;
-            }
-            .main-nav a {
-                padding: 12px 0;
-                border-bottom: 1px solid var(--tech-border);
-                font-size: 16px;
-                color: rgba(0, 0, 0, 0.7);
-            }
-            [data-theme="dark"] .main-nav {
-                background: #1a1a1a;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            }
-            [data-theme="dark"] .main-nav a {
-                color: rgba(255, 255, 255, 0.75);
-                border-bottom-color: rgba(255, 255, 255, 0.08);
-            }
-            [data-theme="dark"] .main-nav a:hover {
-                color: var(--primary);
-            }
-            .mobile-menu-btn {
-                display: flex !important;
-            }
-            .product-title {
-                font-size: 24px !important;
-            }
-            .thumbnail-grid {
-                display: flex;
-                flex-direction: row;
-                overflow-x: auto;
-                gap: 8px;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                padding-bottom: 4px;
-                justify-content: center;
-            }
-            .thumbnail-grid::-webkit-scrollbar {
-                display: none;
-            }
-            .thumbnail {
-                flex: 0 0 60px;
-                width: 60px;
-                aspect-ratio: 1;
-            }
-            .main-image {
-                aspect-ratio: 1;
-                max-height: 360px;
-                margin: 0 auto;
-            }
-            .main-image img {
-                object-fit: contain;
-            }
-            .product-images {
-                gap: 12px;
-            }
-            .breadcrumb {
-                font-size: 9px;
-                margin-bottom: 20px;
-            }
-            .quantity-cart {
-                flex-direction: row;
-                gap: 8px;
-                align-items: stretch;
-            }
-            .quantity-selector {
-                flex-shrink: 0;
-                justify-content: center;
-            }
-            .qty-btn {
-                width: 36px;
-                height: 100%;
-                min-height: 44px;
-            }
-            .qty-input {
-                width: 36px;
-            }
-            .add-to-cart {
-                flex: 1;
-                padding: 10px 12px;
-                font-size: 12px;
-                letter-spacing: 0.08em;
-            }
-            .specs-table td {
-                padding: 16px 12px;
-                font-size: 12px;
-            }
-            .specs-table td:first-child {
-                width: 40%;
-            }
-            .section-title {
-                font-size: 28px;
-            }
-            .mobile-top-price {
-                display: block !important;
-                margin-bottom: 16px;
-            }
-            .mobile-key-features {
-                display: block !important;
-            }
-            .desktop-key-features {
-                display: none !important;
-            }
-            .price-section {
-                display: none !important;
-            }
-            .quantity-cart {
-                display: none !important;
-            }
-            .mobile-quantity-cart {
-                display: block !important;
-            }
-            .mobile-overview {
-                display: block !important;
-            }
-            .desktop-overview {
-                display: none !important;
-            }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buy KITE H7 — Flight Controller</title>
+<meta name="description" content="Buy the KITE H7 flight controller: STM32H7 at 480 MHz, dual IMUs, ArduPilot and PX4 ready. ₹26,000 inclusive of GST.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap" rel="stylesheet">
+<script>
+  (function () {
+    var t = 'light';
+    try { t = localStorage.getItem('kiteh7-theme') || 'light'; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', t);
+    document.documentElement.classList.add('js');
+  })();
+</script>
+<style>
 
-            /* Product page mobile footer — 2×2 grid, no branding section */
-            footer .footer-grid {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 1.5rem !important;
-                flex-wrap: nowrap !important;
-            }
-            footer .footer-grid .footer-section {
-                flex: none !important;
-                text-align: left !important;
-                border-bottom: none !important;
-                padding-bottom: 0 !important;
-            }
-            footer .footer-grid .footer-section h4 {
-                font-size: 0.8rem;
-                margin-bottom: 0.5rem;
-            }
-            footer .footer-grid .footer-section a {
-                font-size: 0.8rem;
-            }
-            footer .footer-grid .footer-section ul li {
-                margin-bottom: 0.3rem;
-            }
-        }
+/* ───────── Tokens ───────── */
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --paper: #f5f5f7;
+  --ink: #1d1d1f;
+  --grey: #6e6e73;
+  --grey-dark: #86868b;
+  --hair: #d2d2d7;
 
-        /* ── Feature Section Mobile Reordering ── */
-        @media (max-width: 768px) {
-            /* Section 1: Show title first, then image, then description */
-            .feature-section-1 .feature-split-container {
-                display: flex;
-                flex-direction: column;
-            }
-            .feature-section-1 .feature-split-image {
-                order: 2;
-            }
-            .feature-section-1 .feature-split-content {
-                order: 1;
-            }
+  --bg: var(--white);
+  --bg-alt: var(--paper);
+  --fg: var(--ink);
+  --fg-2: var(--grey);
+  --line: var(--hair);
+  --btn-bg: var(--ink);
+  --btn-fg: var(--white);
+  --nav-bg: rgba(255,255,255,0.72);
+  --field: var(--white);
+  --accent: #0071e3;
 
-            /* Section 2: Show title/image/description on mobile */
-            .feature-section-2 .feature-split-container {
-                display: flex;
-                flex-direction: column;
-            }
-            .feature-section-2 .feature-split-image {
-                order: 2;
-            }
-            .feature-section-2 .feature-split-content {
-                order: 1;
-            }
-        }
+  --font: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --wrap: 1120px;
+}
+[data-theme="dark"] {
+  --bg: var(--black);
+  --bg-alt: #161617;
+  --fg: #f5f5f7;
+  --fg-2: var(--grey-dark);
+  --line: #333336;
+  --btn-bg: #f5f5f7;
+  --btn-fg: var(--black);
+  --nav-bg: rgba(0,0,0,0.72);
+  --field: #1d1d1f;
+  --accent: #2997ff;
+}
+/* Sections that stay black in both themes */
+.on-black {
+  --bg: var(--black);
+  --bg-alt: #161617;
+  --fg: #f5f5f7;
+  --fg-2: var(--grey-dark);
+  --line: #333336;
+  --btn-bg: #f5f5f7;
+  --btn-fg: var(--black);
+  --accent: #2997ff;
+  background: var(--bg);
+  color: var(--fg);
+}
 
-        @media (max-width: 480px) {
-            .product-title {
-                font-size: 20px !important;
-            }
-            .thumbnail-grid {
-                display: flex;
-                flex-direction: row;
-                overflow-x: auto;
-                gap: 6px;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                justify-content: center;
-            }
-            .thumbnail-grid::-webkit-scrollbar {
-                display: none;
-            }
-            .thumbnail {
-                flex: 0 0 52px;
-                width: 52px;
-            }
-            .main-image {
-                max-height: 300px;
-            }
-            main {
-                padding: 20px 16px 60px !important;
-            }
-            .specs-section {
-                margin: 40px auto;
-            }
-            .header-actions {
-                gap: 8px;
-            }
-            .icon-btn {
-                width: 36px;
-                height: 36px;
-            }
-        }
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-charcoal);
-        }
+/* ───────── Base ───────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color .4s var(--ease), color .4s var(--ease);
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+section { scroll-margin-top: 52px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+.material-symbols-outlined { font-size: 22px; line-height: 1; }
 
-        /* ── Peripheral Compatibility Tab System ── */
-        .periph-section {
-            max-width: 1400px;
-            margin: 80px auto;
-            padding: 0;
-        }
-        .periph-tabs {
-            display: flex;
-            gap: 0;
-            border-bottom: 2px solid var(--tech-border);
-            margin-bottom: 0;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .periph-tabs::-webkit-scrollbar { display: none; }
-        .periph-tab {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 16px 28px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-dark);
-            opacity: 0.5;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            position: relative;
-            bottom: -2px;
-        }
-        .periph-tab:hover {
-            opacity: 0.8;
-            color: var(--primary);
-        }
-        .periph-tab.active {
-            opacity: 1;
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-        .periph-tab .material-symbols-outlined {
-            font-size: 20px;
-        }
-        .periph-panel {
-            display: none;
-            animation: periphFadeIn 0.4s ease;
-        }
-        .periph-panel.active {
-            display: block;
-        }
-        @keyframes periphFadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .periph-panel-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            padding: 40px 0 32px;
-            border-bottom: 1px solid var(--tech-border);
-        }
-        .periph-panel-icon {
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--primary-ultra-light);
-            border: 2px solid var(--primary);
-            flex-shrink: 0;
-        }
-        .periph-panel-icon .material-symbols-outlined {
-            font-size: 28px;
-            color: var(--primary);
-        }
-        .periph-panel-meta h3 {
-            font-size: 20px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            color: var(--text-charcoal);
-            margin-bottom: 6px;
-        }
-        .periph-panel-meta p {
-            font-size: 14px;
-            line-height: 1.7;
-            color: var(--text-dark);
-            max-width: 600px;
-        }
-        .periph-rows {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .periph-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--tech-border);
-            transition: all 0.25s ease;
-        }
-        .periph-row:last-child {
-            border-bottom: none;
-        }
-        .periph-row:hover {
-            padding-left: 12px;
-            background: var(--primary-ultra-light);
-        }
-        .periph-row-icon {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--primary);
-            flex-shrink: 0;
-        }
-        .periph-row-icon .material-symbols-outlined {
-            font-size: 18px;
-            color: #000;
-        }
-        .periph-row-text {
-            flex: 1;
-        }
-        .periph-row-text strong {
-            display: block;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--text-charcoal);
-            margin-bottom: 2px;
-        }
-        .periph-row-text span {
-            font-size: 13px;
-            color: var(--text-dark);
-            opacity: 0.75;
-        }
-        .periph-can-banner {
-            margin-top: 40px;
-            padding: 32px;
-            border: 2px solid var(--primary);
-            background: var(--primary-ultra-light);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .periph-can-banner .material-symbols-outlined {
-            font-size: 32px;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-        .periph-can-banner h4 {
-            font-size: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-charcoal);
-            margin-bottom: 4px;
-        }
-        .periph-can-banner p {
-            font-size: 13px;
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-        .periph-can-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .periph-can-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 12px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-charcoal);
-            border: 1px solid var(--primary);
-            background: rgba(212, 168, 0, 0.08);
-        }
-        @media (max-width: 768px) {
-            .periph-tabs {
-                gap: 0;
-            }
-            .periph-tab {
-                padding: 12px 16px;
-                font-size: 11px;
-            }
-            .periph-tab .material-symbols-outlined {
-                font-size: 16px;
-            }
-            .periph-panel-header {
-                flex-direction: column;
-                gap: 12px;
-                padding: 24px 0 20px;
-            }
-            .periph-panel-icon {
-                width: 44px;
-                height: 44px;
-            }
-            .periph-panel-icon .material-symbols-outlined {
-                font-size: 22px;
-            }
-            .periph-panel-meta h3 {
-                font-size: 16px;
-            }
-            .periph-row {
-                padding: 16px 0;
-                gap: 12px;
-            }
-            .periph-can-banner {
-                flex-direction: column;
-                text-align: center;
-                padding: 24px 16px;
-            }
-            .periph-can-tags {
-                justify-content: center;
-            }
-        }
-        @media (max-width: 480px) {
-            .periph-tab {
-                padding: 10px 12px;
-                font-size: 10px;
-                gap: 4px;
-            }
-            .periph-tab .periph-tab-label {
-                display: none;
-            }
-            .periph-tab .material-symbols-outlined {
-                font-size: 20px;
-            }
-        }
+/* ───────── Type scale ───────── */
+.display {
+  font-size: clamp(40px, 6.2vw, 80px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+}
+.title {
+  font-size: clamp(32px, 4.4vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.07;
+}
+.lead {
+  font-size: clamp(19px, 1.9vw, 24px);
+  font-weight: 500;
+  line-height: 1.38;
+  letter-spacing: -0.015em;
+  color: var(--fg-2);
+  max-width: 34ch;
+}
+.body { color: var(--fg-2); max-width: 60ch; }
 
-        /* FAQ Accordion */
-        .faq-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-        .faq-item {
-            border: 1px solid var(--tech-border);
-            border-bottom: none;
-            background: var(--surface-light);
-            transition: all 0.3s ease;
-        }
-        .faq-item:last-child {
-            border-bottom: 1px solid var(--tech-border);
-        }
-        .faq-item.active {
-            background: var(--primary-ultra-light);
-            border-color: var(--primary);
-        }
-        .faq-item.active + .faq-item {
-            border-top-color: var(--primary);
-        }
-        .faq-question {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-charcoal);
-            text-align: left;
-            gap: 16px;
-            transition: color 0.3s;
-        }
-        .faq-question:hover {
-            color: var(--primary-dark);
-        }
-        .faq-icon {
-            font-size: 22px;
-            color: var(--text-dark);
-            transition: transform 0.3s ease;
-            flex-shrink: 0;
-        }
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-            color: var(--primary);
-        }
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s ease, padding 0.35s ease;
-            padding: 0 24px;
-        }
-        .faq-item.active .faq-answer {
-            max-height: 300px;
-            padding: 0 24px 20px;
-        }
-        .faq-answer p {
-            font-size: 14px;
-            line-height: 1.8;
-            color: var(--text-dark);
-        }
-        @media (max-width: 768px) {
-            .faq-question {
-                padding: 16px 16px;
-                font-size: 14px;
-            }
-            .faq-answer {
-                padding: 0 16px;
-            }
-            .faq-item.active .faq-answer {
-                padding: 0 16px 16px;
-            }
-        }
-    </style>
+/* ───────── Buttons ───────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 28px;
+  border: 0; border-radius: 999px;
+  background: var(--btn-bg); color: var(--btn-fg);
+  font-size: 17px; font-weight: 500; letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s var(--ease);
+}
+.btn:hover { opacity: .86; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn-ghost { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1.5px var(--fg); }
+.text-link { font-weight: 500; border-bottom: 1px solid transparent; transition: border-color .2s; }
+.text-link:hover { border-color: currentColor; }
+
+/* ───────── Ribbon ───────── */
+.ribbon {
+  background: var(--bg-alt);
+  color: var(--fg);
+  text-align: center;
+  font-size: 14px;
+  padding: 12px 24px;
+}
+.ribbon a { color: var(--accent); }
+.ribbon a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.hl { color: var(--accent); }
+
+/* ───────── Nav ───────── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  height: 52px;
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s, background-color .4s;
+}
+.nav.scrolled { border-bottom-color: var(--line); }
+.nav-inner {
+  max-width: var(--wrap); height: 100%; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.nav-logo { display: flex; align-items: center; height: 100%; }
+.nav-logo img { height: 40px; width: auto; transition: filter .4s var(--ease); }
+/* Same KITE H7 logo in both themes; flipped to white on dark */
+[data-theme="dark"] .nav-logo img { filter: invert(1); }
+.nav-links { display: flex; gap: 36px; font-size: 13px; }
+.nav-links a { opacity: .78; transition: opacity .2s; }
+.nav-links a:hover { opacity: 1; }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-buy { min-height: 30px; padding: 0 16px; font-size: 13px; }
+.icon-btn {
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: transparent; color: var(--fg);
+  cursor: pointer; transition: background-color .2s;
+}
+.icon-btn:hover { background: var(--bg-alt); }
+.menu-btn { display: none; }
+
+/* ───────── Specs ───────── */
+.specs { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg-alt); }
+.spec-table { margin-top: 56px; }
+.spec-row {
+  display: grid; grid-template-columns: 260px 1fr; gap: 24px;
+  padding: 36px 0; border-top: 1px solid var(--line);
+}
+.spec-row h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+.spec-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 28px 40px; }
+.spec-k { font-size: 14px; color: var(--fg-2); }
+.spec-v { font-size: 21px; font-weight: 600; letter-spacing: -0.02em; margin-top: 2px; }
+
+/* ───────── Support ───────── */
+.support { padding: clamp(96px, 14vw, 160px) 0; }
+.support-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
+.support-links { list-style: none; }
+.support-links li { border-top: 1px solid var(--line); }
+.support-links li:last-child { border-bottom: 1px solid var(--line); }
+.support-links a {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center;
+  padding: 24px 0;
+}
+.support-links .material-symbols-outlined { font-size: 28px; }
+.support-links strong { display: block; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
+.support-links span.desc { display: block; font-size: 15px; color: var(--fg-2); margin-top: 2px; }
+.support-links .go { color: var(--fg-2); transition: transform .25s var(--ease), color .2s; }
+.support-links a:hover .go { transform: translateX(4px); color: var(--accent); }
+
+/* ───────── Footer ───────── */
+footer { background: var(--bg-alt); color: var(--fg-2); font-size: 12px; padding: 40px 0 28px; border-top: 1px solid var(--line); }
+.foot-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 32px; }
+.foot-brand strong { display: block; color: var(--fg); font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.foot-brand p { max-width: 32ch; }
+.foot-col h4 { color: var(--fg); font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+.foot-col ul { list-style: none; display: grid; gap: 8px; }
+.foot-col a:hover { color: var(--fg); text-decoration: underline; }
+.foot-bottom { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* ───────── Buy ───────── */
+.buy { padding: 32px 0 clamp(80px, 10vw, 120px); background: var(--bg); }
+.crumbs { display: flex; gap: 8px; font-size: 13px; color: var(--fg-2); margin-bottom: 28px; }
+.crumbs a:hover { color: var(--fg); text-decoration: underline; }
+.buy-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: start; }
+.buy-gallery { position: sticky; top: 76px; }
+.stage-img { position: relative; aspect-ratio: 1; border-radius: 32px; background: var(--bg-alt); overflow: hidden; }
+.stage-img img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; padding: 8%;
+  transition: opacity .35s var(--ease), transform .7s var(--ease);
+}
+.stage-img img.is-out { opacity: 0; transform: scale(.96); }
+.thumbs { margin-top: 16px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.thumb {
+  width: 72px; height: 72px; padding: 6px;
+  border: 0; border-radius: 16px; background: var(--bg-alt);
+  cursor: pointer; box-shadow: inset 0 0 0 1px transparent;
+  transition: box-shadow .25s var(--ease);
+}
+.thumb img { width: 100%; height: 100%; object-fit: contain; }
+.thumb:hover { box-shadow: inset 0 0 0 1px var(--line); }
+.thumb[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--fg); }
+
+.buy-panel h1 { font-size: clamp(40px, 5vw, 64px); font-weight: 700; letter-spacing: -0.045em; line-height: 1.02; }
+.buy-panel .lead { margin-top: 14px; }
+.price-block { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line); }
+.price { display: inline-block; font-size: clamp(34px, 3.6vw, 44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.price.bump { animation: bump .4s var(--ease); }
+@keyframes bump { 40% { transform: translateY(-4px); opacity: .55; } }
+.price-note { margin-top: 4px; font-size: 14px; color: var(--fg-2); }
+.stock { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 14px; font-weight: 500; }
+.stock::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.buy-row { margin-top: 24px; display: flex; gap: 12px; }
+.buy-row .btn { flex: 1; }
+.stepper { display: inline-flex; align-items: center; height: 48px; padding: 4px; border-radius: 999px; background: var(--bg-alt); }
+.stepper button {
+  width: 40px; height: 40px; border: 0; border-radius: 50%;
+  display: grid; place-items: center;
+  background: transparent; color: var(--fg); cursor: pointer;
+  transition: background-color .2s;
+}
+.stepper button:hover:not(:disabled) { background: var(--bg); }
+.stepper button:disabled { opacity: .3; cursor: default; }
+.stepper output { min-width: 32px; text-align: center; font-size: 17px; font-weight: 600; }
+.enquire { width: 100%; margin-top: 12px; }
+.b2b { margin-top: 16px; font-size: 14px; color: var(--fg-2); }
+.b2b a, .faq-a a { color: var(--accent); }
+.b2b a:hover, .faq-a a:hover { text-decoration: underline; }
+
+.key-list { margin-top: 36px; list-style: none; }
+.key-list li { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
+.key-list li:last-child { border-bottom: 1px solid var(--line); }
+.key-list .material-symbols-outlined { color: var(--accent); }
+.box { margin-top: 36px; }
+.box h2 { font-size: 21px; font-weight: 600; letter-spacing: -0.02em; }
+.box ul { margin-top: 12px; list-style: none; display: grid; gap: 10px; }
+.box li { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--fg-2); }
+.box li .material-symbols-outlined { color: var(--fg); font-size: 20px; }
+.sku { margin-top: 24px; font-size: 13px; color: var(--fg-2); }
+
+/* One orchestrated entrance */
+.js .buy-gallery { animation: lift 1.2s var(--ease) both; }
+.js .buy-panel { animation: rise 1.2s var(--ease) .12s both; }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes lift { from { opacity: 0; transform: translateY(40px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* ───────── Statement + highlights ───────── */
+.statement { padding: clamp(96px, 14vw, 160px) 0; }
+.statement-text {
+  font-size: clamp(28px, 4vw, 48px); font-weight: 600;
+  letter-spacing: -0.035em; line-height: 1.15; max-width: 26ch;
+}
+.statement-text .dim { color: var(--fg-2); }
+.facts { margin-top: clamp(64px, 8vw, 96px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.fact { border-top: 1px solid var(--line); padding-top: 20px; }
+.fact-big { font-size: clamp(34px, 3.6vw, 48px); font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
+.fact-big small { font-size: .45em; font-weight: 600; letter-spacing: -0.01em; margin-left: 4px; }
+.fact p { margin-top: 10px; font-size: 15px; color: var(--fg-2); }
+
+/* ───────── Compatibility ───────── */
+.compat { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg); }
+.compat-head { text-align: center; max-width: 820px; margin: 0 auto; }
+.compat-head .lead { margin: 18px auto 0; }
+.seg-wrap { margin-top: 48px; display: flex; justify-content: center; }
+.seg {
+  position: relative; display: inline-flex; max-width: 100%;
+  padding: 4px; border-radius: 999px; background: var(--bg-alt);
+  overflow-x: auto; scrollbar-width: none;
+}
+.seg::-webkit-scrollbar { display: none; }
+.seg button {
+  position: relative; z-index: 1; flex: none;
+  padding: 10px 20px; border: 0; border-radius: 999px; background: none;
+  font-size: 15px; font-weight: 500; color: var(--fg-2); white-space: nowrap;
+  cursor: pointer; transition: color .3s var(--ease);
+}
+.seg button[aria-selected="true"] { color: var(--fg); }
+.seg-pill {
+  position: absolute; top: 4px; bottom: 4px; left: 0; width: 0;
+  border-radius: 999px; background: var(--bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+  transition: transform .45s var(--ease), width .45s var(--ease);
+}
+[data-theme="dark"] .seg-pill { background: #3a3a3c; box-shadow: none; }
+.compat-panel {
+  margin-top: 56px;
+  display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(32px, 5vw, 80px); align-items: start;
+  animation: panelIn .5s var(--ease);
+}
+.compat-panel[hidden] { display: none; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.compat-panel h3 { font-size: clamp(28px, 3vw, 40px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.1; }
+.compat-panel > div > p { margin-top: 12px; color: var(--fg-2); max-width: 36ch; }
+.rows { list-style: none; }
+.rows li { display: flex; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line); }
+.rows li:last-child { border-bottom: 1px solid var(--line); }
+.rows .material-symbols-outlined { color: var(--accent); margin-top: 2px; }
+.rows strong { display: block; font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
+.rows span:not(.material-symbols-outlined) { display: block; margin-top: 2px; font-size: 15px; color: var(--fg-2); }
+
+/* ───────── FAQ ───────── */
+.faq { padding: clamp(96px, 12vw, 140px) 0; background: var(--bg); }
+.faq-list { margin-top: 48px; border-top: 1px solid var(--line); }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-q {
+  width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  padding: 26px 0; border: 0; background: none; color: var(--fg); cursor: pointer; text-align: left;
+  font-size: clamp(19px, 1.8vw, 22px); font-weight: 600; letter-spacing: -0.02em;
+}
+.plus { position: relative; flex: none; width: 20px; height: 20px; }
+.plus::before, .plus::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 16px; height: 2px; border-radius: 2px; background: currentColor;
+  transform: translate(-50%, -50%);
+  transition: transform .4s var(--ease);
+}
+.plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+.faq-item.open .plus::after { transform: translate(-50%, -50%) rotate(0deg); }
+.faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease); }
+.faq-item.open .faq-a { grid-template-rows: 1fr; }
+.faq-a > div { overflow: hidden; }
+.faq-a p { padding: 0 48px 26px 0; color: var(--fg-2); max-width: 70ch; }
+
+/* ───────── Sticky buy bar ───────── */
+.buybar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateY(110%);
+  transition: transform .45s var(--ease);
+}
+.buybar.show { transform: none; }
+.buybar-inner {
+  max-width: var(--wrap); margin: 0 auto; padding: 12px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.buybar strong { font-size: 17px; font-weight: 600; }
+.buybar span { margin-left: 12px; font-size: 15px; color: var(--fg-2); }
+.buybar .btn { min-height: 40px; padding: 0 24px; font-size: 15px; }
+
+/* ───────── Responsive ───────── */
+@media (max-width: 900px) {
+  .buy-grid, .compat-panel, .support-grid { grid-template-columns: 1fr; }
+  .buy-gallery { position: static; }
+  .facts { grid-template-columns: repeat(2, 1fr); }
+  .spec-row { grid-template-columns: 1fr; }
+  .foot-grid { grid-template-columns: repeat(2, 1fr); }
+  .foot-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 833px) {
+  .menu-btn { display: grid; }
+  .nav-links {
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; gap: 0;
+    background: var(--bg);
+    padding: 8px 24px 32px;
+    font-size: 26px; font-weight: 600; letter-spacing: -0.02em;
+    height: calc(100svh - 52px);
+    opacity: 0; transform: translateY(-8px); pointer-events: none;
+    transition: opacity .3s var(--ease), transform .3s var(--ease);
+  }
+  .nav-links a { opacity: 1; padding: 12px 0; }
+  .nav.open .nav-links { opacity: 1; transform: none; pointer-events: auto; }
+  .nav.open { background: var(--bg); }
+}
+@media (max-width: 600px) {
+  .stage-img { border-radius: 24px; }
+  .thumb { width: 60px; height: 60px; }
+  .seg-wrap { justify-content: flex-start; }
+  .faq-a p { padding-right: 0; }
+  .facts { gap: 28px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
 </head>
 <body>
-    <!-- Yellow Strip -->
-    <div class="yellow-strip">&lt&lt Smart Tech for Your Next Build &gt&gt</div>
 
-    <header>
-        <div class="header-container">
-            <a class="logo" href="index.html" style="display: flex; align-items: center; gap: 0.5rem;">
-                <img id="siteLogo" src="assets/edited/Kitronix.png" alt="Kite H7 Logo" style="height: 92px; width: 92px; object-fit: contain;">
-            </a>
-            <nav class="main-nav" id="mainNav">
-                <a href="index.html">Home</a>
-                <a href="product.html">Purchase</a>
-                <a href="kitronix-workshop.html">Workshop</a>
-                <a href="#support">Support</a>
-                <a href="about.html">About</a>
-            </nav>
-            <div class="header-actions">
-                <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle dark/light mode">
-                    <span class="material-symbols-outlined" id="themeToggleIcon">dark_mode</span>
-                </button>
-                <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-            </div>
-        </div>
-    </header>
+<!-- Ribbon -->
+<div class="ribbon">Need 10 or more? <a href="mailto:business@kiteh7.in">Ask about bulk pricing</a></div>
 
-    <main style="padding: 30px 40px 80px;">
-        <div class="breadcrumb">
-            <a href="index.html">Home</a>
-            <span>/</span>
-            <a href="product.html">Purchase</a>
-            <span>/</span>
-            <span style="opacity: 1;">Kite H7</span>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-images">
-                <div class="main-image">
-                    <img id="mainProductImage" src="assets/edited/A1.png" alt="Kite H7 Flight Controller">
-                </div>
-                <div class="thumbnail-grid">
-                    <div class="thumbnail" onclick="changeImage('assets/edited/A3.png', this)">
-                        <img src="assets/edited/A3.png" alt="View 3">
-                    </div>
-                    <div class="thumbnail active" onclick="changeImage('assets/edited/A1.png', this)">
-                        <img src="assets/edited/A1.png" alt="View 1">
-                    </div>
-                    <div class="thumbnail" onclick="changeImage('assets/edited/A5.png', this)">
-                        <img src="assets/edited/A5.png" alt="View 5">
-                    </div>
-                    <div class="thumbnail" onclick="changeImage('assets/edited/A2.png', this)">
-                        <img src="assets/edited/A2.png" alt="View 2">
-                    </div>
-                    
-                
-                    
-                </div>
-
-                <!-- Key Features Box -->
-                <div class="desktop-key-features" style="margin-top: 24px; padding: 20px; background: var(--primary-ultra-light); border: 2px solid var(--primary); border-radius: 4px;">
-                    <h4 style="font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-charcoal); margin-bottom: 12px;">Key Features</h4>
-                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
-                        <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                            <span>STM32H7 480 MHz</span>
-                        </li>
-                        <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                            <span>24/7 After-Sales Support </span>
-                        </li>
-                        <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                            <span> High Stability</span>
-                        </li>
-                        <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                            <span> Custom Built Firmware</span>
-                        </li>
-                        <li style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dark);">
-                            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                            <span>-40°C to +85°C </span>
-                        </li>
-                        
-                        
-                    </ul>
-                </div>
-            </div>
-
-            <div class="product-info">
-                <!-- Mobile-only price at top -->
-                <div class="mobile-top-price" style="display:none;">
-                    <div style="display:flex; align-items:baseline; gap:8px;">
-                        <span style="font-size:28px; color:var(--text-charcoal);">₹</span>
-                        <span id="totalPriceMobile" style="font-size:48px;">19700.00</span>
-                    </div>
-                </div>
-                <!-- Mobile-only quantity + buy now -->
-                <div class="mobile-quantity-cart" style="display:none; margin-bottom: 20px;">
-                    <div style="display:flex; gap:10px; align-items:stretch;">
-                        <div style="display:flex; border:2px solid var(--primary); border-radius:6px; overflow:hidden; background:var(--surface-light);">
-                            <button class="qty-btn mobile-qty-minus" style="width:40px; min-height:46px; background:transparent; border:none; cursor:pointer; color:var(--text-dark); font-size:18px; display:flex; align-items:center; justify-content:center;">
-                                <span class="material-symbols-outlined">remove</span>
-                            </button>
-                            <input type="text" class="mobile-qty-input" value="1" readonly style="width:40px; text-align:center; border:none; background:transparent; font-weight:900; font-size:16px; color:var(--text-charcoal);">
-                            <button class="qty-btn mobile-qty-plus" style="width:40px; min-height:46px; background:transparent; border:none; cursor:pointer; color:var(--text-dark); font-size:18px; display:flex; align-items:center; justify-content:center;">
-                                <span class="material-symbols-outlined">add</span>
-                            </button>
-                        </div>
-                        <a href="#" class="mobile-buy-now-btn" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; background:linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color:var(--surface-light); font-size:14px; font-weight:900; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none; border-radius:6px; box-shadow:0 4px 15px rgba(0,0,0,0.15);">
-                            <span class="material-symbols-outlined" style="font-size:20px;">shopping_cart_checkout</span>
-                            Buy Now
-                        </a>
-                    </div>
-                </div>
-                <!-- Mobile-only Overview -->
-                <div class="mobile-overview" style="display:none; margin-bottom: 20px; padding-top: 16px; border-top: 1px solid var(--tech-border);">
-                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--text-charcoal);">Overview</h3>
-                    <p style="font-size: 14px; line-height: 1.75; color: var(--text-dark);">The Kite H7 is a high-performance flight controller engineered for both hobbyists and professional UAV builders. Built on the powerful STM32H7 processor, it delivers unmatched reliability, precision, and versatility. Designed for custom firmware like ArduPilot and PX4, Kite H7 adapts seamlessly to all your autonomous flight projects.</p>
-                </div>
-                <div class="product-header">
-                    
-                    <div style="margin: 20px 0; padding: 16px 0; border-bottom: 1px solid var(--tech-border);">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                            <span style="font-size: 14px; font-weight: 700; color: var(--text-charcoal);">Availability:</span>
-                            <span style="font-size: 14px; font-weight: 700; color: #e74c3c;">In stock</span>
-                        </div>
-                        
-                        <a href="https://wa.me/917200275179?text=Hi%2C%20I%27m%20interested%20in%20the%20Kite%20H7%20Flight%20Controller" target="_blank" class="wishlist-btn" style="max-width: 200px; padding: 12px 24px; background: var(--primary); color: #000; border: none; margin-bottom: 20px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
-                            <span>Enquire Now</span>
-                        </a>
-
-                        <div style="margin-bottom: 16px;">
-                            <p style="font-size: 14px; color: var(--text-dark);">For bulk orders or B2B inquiries, email us: <a href="mailto:kitronix240@gmail.com" style="color: #3498db; text-decoration: none; font-weight: 600;">kitronix240@gmail.com</a></p>
-                        </div>
-                    </div>
-
-                    <!-- Mobile-only Key Features -->
-                    <div class="mobile-key-features" style="display:none; margin-bottom: 16px; padding: 20px; background: var(--primary-ultra-light); border: 2px solid var(--primary); border-radius: 4px;">
-                        <h4 style="font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-charcoal); margin-bottom: 12px;">Key Features</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
-                            <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                                <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                                <span>STM32H7 480 MHz</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                                <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                                <span>24/7 After-Sales Support</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                                <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                                <span>High Stability</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text-dark);">
-                                <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                                <span>Custom Built Firmware</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dark);">
-                                <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">check_circle</span>
-                                <span>-40°C to +85°C</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div style="margin: 24px 0;">
-                        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-charcoal);">SKU: 31387</h3>
-                        <ul style="list-style: decimal; padding-left: 20px; line-height: 2; color: var(--text-dark);">
-                            <li>Type: Advanced autopilot system.</li>
-                            <li>Processor: STM32H7 @ 480 MHz (ARM Cortex-M7).</li>
-                            <li>Connectivity: 2 x GPS, 3 x telemetry, 2 x CAN, 1 x I²C port</li>
-                            <li>Dimensions: 63 × 48 × 18 mm.</li>
-                            <li>PWM Outputs: 14 channels for versatile UAV setups</li>
-                            <li>IMU Sensor: ICM-42688 + BMI088, Dual-Redundant for stable, precise sensingy.</li>
-                            <li>Weight: 42g – compact and lightweight.</li>
-                        </ul>
-                    </div>
-
-                    <div style="margin: 24px 0; padding: 20px 0; border-top: 1px solid var(--tech-border); border-bottom: 1px solid var(--tech-border);">
-                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-charcoal);">What's Included</h3>
-                        <ul style="list-style: none; padding: 0; line-height: 1.8; color: var(--text-dark); font-size: 14px;">
-                            <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">memory</span>
-                                <span>Kite H7 main board with pre-installed firmware</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">cable</span>
-                                <span>JST-GH connectors and power cables</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px;">
-                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">description</span>
-                                <span>Quick start guide and technical manual</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="price-section" style="margin: 16px 0 0 0; padding: 0;">
-                        <div style="display:flex; align-items:baseline; gap:8px;">
-                            <span style="font-size:28px; color:var(--text-charcoal);">₹</span>
-                            <span id="totalPrice" style="font-size:48px;">19700.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quantity-cart">
-                    <div class="quantity-selector">
-                        <button class="qty-btn" id="qtyMinus">
-                            <span class="material-symbols-outlined">remove</span>
-                        </button>
-                        <input type="text" class="qty-input" id="qtyInput" value="1" readonly>
-                        <button class="qty-btn" id="qtyPlus">
-                            <span class="material-symbols-outlined">add</span>
-                        </button>
-                    </div>
-                    <a href="#" id="buyNowBtn" class="add-to-cart" style="text-decoration: none;">
-                        <span class="material-symbols-outlined">shopping_cart_checkout</span>
-                        Buy now
-                    </a>
-                </div>
-                <div class="desktop-overview" style="margin: 24px 0 0 0; padding-top: 20px; border-top: 1px solid var(--tech-border);">
-                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--text-charcoal);">Overview</h3>
-                        <p style="font-size: 14px; line-height: 1.75; color: var(--text-dark);">The Kite H7 is a high-performance flight controller engineered for both hobbyists and professional UAV builders. Built on the powerful STM32H7 processor, it delivers unmatched reliability, precision, and versatility. Designed for custom firmware like ArduPilot and PX4, Kite H7 adapts seamlessly to all your autonomous flight projects.</p>
-                    </div>
-            </div>
-        </div>
-        <br>
-
-        <!-- Feature Section 1: Built for Performance -->
-        <div class="feature-split-section feature-split-alt feature-section-1">
-            <div class="feature-split-container">
-                <div class="feature-split-image">
-                    <img src="assets/edited/A3edited.png" alt="Kite H7 Flight Controller" />
-                </div>
-                <div class="feature-split-content">
-                    <h2 class="feature-split-title">Built for Performance</h2>
-                    <div class="feature-split-divider"></div>
-                    <p class="feature-split-desc">Powered by the STM32H753 running at 480&nbsp;MHz, the Kite H7 delivers the raw processing power required for demanding flight algorithms and real-time firmware execution — giving you the speed and reliability every serious build demands.</p>
-                    <ul class="feature-split-list">
-                        <li><span class="material-symbols-outlined">check_circle</span> ARM Cortex-M7 @ 480 MHz</li>
-                        <li><span class="material-symbols-outlined">check_circle</span> 1 MB RAM &amp; 2 MB Flash</li>
-                        <li><span class="material-symbols-outlined">check_circle</span> Custom Firmware Compatible</li>
-                        <li><span class="material-symbols-outlined">check_circle</span> ArduPilot &amp; PX4 Ready</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <br>
-        <br>
-        <!-- Feature Section 2: Precision Sensing -->
-        <div class="feature-split-section feature-split-alt feature-section-2" style="background-color: #000;">
-            <div class="feature-split-container" >
-                <div class="feature-split-content" >
-                    <h2 class="feature-split-title" style="color: #ffffff;">Precision Sensing &amp; Control</h2>
-                    <div class="feature-split-divider"></div>
-                    <p class="feature-split-desc" style="color: #ffffff;">A dual-IMU architecture combining the ICM-42688 and BMI088 sensors provides redundant motion sensing, ensuring rock-solid stability even under extreme vibration loads. Onboard barometer and compass complete the picture.</p>
-                    <ul class="feature-split-list" style="color: #ffffff;">
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> ICM-42688 + BMI088 Dual IMU</li>
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> BMP388 Onboard Barometer</li>
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> BMM350 Onboard Compass</li>
-                        <li style="color: #ffffff;"><span class="material-symbols-outlined">check_circle</span> Vibration-Damped Sensor Mounting</li>
-                    </ul>
-                </div>
-                <div class="feature-split-image">
-                    <img src="assets/edited/neon.png" alt="Kite H7 Sensors" />
-                </div>
-            </div>
-        </div>
-
-        <!-- Peripheral Compatibility Section — Tab + Rows -->
-        <div class="periph-section">
-            <p style="font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary); font-weight: 700; margin-bottom: 0.75rem;">Ecosystem Integration</p>
-            <h2 style="font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 900; color: var(--text-charcoal); line-height: 1.2; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: -0.02em;">Peripheral Compatibility</h2>
-            <p style="font-size: 15px; line-height: 1.8; color: var(--text-dark); max-width: 800px; margin-bottom: 40px;">Designed to integrate seamlessly with the industry-standard autopilot ecosystem, supporting a wide range of professional UAV peripherals.</p>
-
-            <!-- Tabs -->
-            <div class="periph-tabs" id="periphTabs">
-                <button class="periph-tab active" data-tab="gps">
-                    <span class="material-symbols-outlined">satellite_alt</span>
-                    <span class="periph-tab-label">GPS</span>
-                </button>
-                <button class="periph-tab" data-tab="telemetry">
-                    <span class="material-symbols-outlined">cell_tower</span>
-                    <span class="periph-tab-label">Telemetry</span>
-                </button>
-                <button class="periph-tab" data-tab="power">
-                    <span class="material-symbols-outlined">bolt</span>
-                    <span class="periph-tab-label">Power</span>
-                </button>
-                <button class="periph-tab" data-tab="esc">
-                    <span class="material-symbols-outlined">speed</span>
-                    <span class="periph-tab-label">ESC</span>
-                </button>
-                <button class="periph-tab" data-tab="rc">
-                    <span class="material-symbols-outlined">settings_remote</span>
-                    <span class="periph-tab-label">RC Input</span>
-                </button>
-                <button class="periph-tab" data-tab="sensors">
-                    <span class="material-symbols-outlined">sensors</span>
-                    <span class="periph-tab-label">Sensors</span>
-                </button>
-            </div>
-
-            <!-- Panel: GPS -->
-            <div class="periph-panel active" id="panel-gps">
-                <div class="periph-panel-header">
-                    <div class="periph-panel-meta">
-                        <h3>GPS &amp; GNSS Modules</h3>
-                        <p>High-precision positioning with support for single-band, multi-band, and RTK GNSS systems.</p>
-                    </div>
-                </div>
-                <ul class="periph-rows">
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>u-blox M8 / M9 GNSS Series</strong><span>Standard single-band GNSS for reliable navigation</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Dual-band RTK GNSS (ZED-F9P Class)</strong><span>Centimeter-level precision for survey &amp; mapping</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>UART, CAN (DroneCAN), and I²C Interfaces</strong><span>Flexible connection options for any GPS module</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Integrated Compass &amp; PPS Time Sync</strong><span>Onboard magnetometer with precise pulse-per-second timing</span></div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Panel: Telemetry -->
-            <div class="periph-panel" id="panel-telemetry">
-                <div class="periph-panel-header">
-                    
-                    <div class="periph-panel-meta">
-                        <h3>Telemetry &amp; Communication</h3>
-                        <p>Reliable long-range and high-speed data links for real-time flight monitoring and mission control.</p>
-                    </div>
-                </div>
-                <ul class="periph-rows">
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>SiK Telemetry Radios</strong><span>433 / 868 / 915 MHz long-range data links</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>High-Speed UART Telemetry</strong><span>Up to 921,600 baud for low-latency streaming</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>DroneCAN Telemetry Devices</strong><span>CAN-based telemetry for noise-immune communication</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>MAVLink Protocol</strong><span>Industry-standard protocol for GCS &amp; companion computers</span></div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Panel: Power -->
-            <div class="periph-panel" id="panel-power">
-                <div class="periph-panel-header">
-                   
-                    <div class="periph-panel-meta">
-                        <h3>Power Module Support</h3>
-                        <p>Designed for safe and reliable power delivery with real-time battery monitoring.</p>
-                    </div>
-                </div>
-                <ul class="periph-rows">
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Analog Power Modules</strong><span>Voltage &amp; current sensing for battery monitoring</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Smart CAN Power Modules</strong><span>DroneCAN-based smart power with cell-level data</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Dual Power Input with Failover</strong><span>Automatic switchover for mission-critical redundancy</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>2S – 12S Battery Systems</strong><span>Wide voltage range for all UAV configurations</span></div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Panel: ESC -->
-            <div class="periph-panel" id="panel-esc">
-                <div class="periph-panel-header">
-                   
-                    <div class="periph-panel-meta">
-                        <h3>ESC &amp; Motor Output</h3>
-                        <p>Flexible motor control supporting both legacy and modern ESC protocols.</p>
-                    </div>
-                </div>
-                <ul class="periph-rows">
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>PWM, OneShot, Multishot</strong><span>Full legacy protocol support</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>DShot 150 / 300 / 600</strong><span>Digital protocol for precise, jitter-free motor control</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Bi-Directional DShot</strong><span>RPM telemetry feedback for dynamic notch filtering</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Up to 16 Motor Outputs</strong><span>MAIN + AUX channels for complex vehicle configurations</span></div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Panel: RC -->
-            <div class="periph-panel" id="panel-rc">
-                <div class="periph-panel-header">
-                  
-                    <div class="periph-panel-meta">
-                        <h3>RC Input Support</h3>
-                        <p>Wide compatibility with modern and legacy radio control systems.</p>
-                    </div>
-                </div>
-                <ul class="periph-rows">
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>SBUS</strong><span>Standard FrSky / Futaba serial bus protocol</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>DSM2 / DSMX</strong><span>Spektrum satellite receiver support</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>CRSF / ELRS</strong><span>Low-latency long-range Crossfire &amp; ExpressLRS</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>PPM (Legacy)</strong><span>Backward-compatible pulse position modulation</span></div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Panel: Sensors -->
-            <div class="periph-panel" id="panel-sensors">
-                <div class="periph-panel-header">
-                 
-                    <div class="periph-panel-meta">
-                        <h3>Sensor &amp; Expansion</h3>
-                        <p>Built for redundancy, precision, and future expansion.</p>
-                    </div>
-                </div>
-                <ul class="periph-rows">
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>External Magnetometers</strong><span>I²C &amp; CAN interfaces for compass redundancy</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Barometer &amp; Airspeed Sensors</strong><span>Precision altitude &amp; differential pressure</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Rangefinders</strong><span>UART, I²C &amp; CAN lidar / sonar support</span></div>
-                    </li>
-                    <li class="periph-row">
-                        <div class="periph-row-icon"><span class="material-symbols-outlined">check_circle</span></div>
-                        <div class="periph-row-text"><strong>Companion Computers</strong><span>UART &amp; USB links for Raspberry Pi, Jetson, etc.</span></div>
-                    </li>
-                </ul>
-            </div>
-
-            
-        </div>
-
-        <hr style="margin: 60px 0; border-color: var(--tech-border);">
-        <!-- 24/7 After-Sales Support Section -->
-        <div class="feature-split-section feature-split-alt">
-            <div style="display: flex; align-items: center; gap: 48px; margin-bottom: 60px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 260px;">
-                <p style="font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary); font-weight: 700; margin-bottom: 0.75rem;">Customer Support</p>
-                <h2 style="font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; color: var(--text-charcoal); line-height: 1.2; margin-bottom: 1.25rem;">24/7 After-Sales Support</h2>
-                <p style="font-size: 15px; line-height: 1.8; color: var(--text-dark);">We're with you every step of the way. Whether you need troubleshooting, guidance, or firmware updates, our dedicated team is available around the clock to ensure your hardware keeps performing at its best. Reliable support, anytime you need it.</p>
-                <div style="margin-top: 1.5rem; display: flex; gap: 12px; flex-wrap: wrap;">
-                    <a href="mailto:kitronix240@gmail.com" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--primary); color: #000; font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 4px;">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
-                        Email Support
-                    </a>
-                    <a href="https://wa.me/917200275179" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 2px solid var(--primary); color: var(--text-charcoal); font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 4px;">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">chat</span>
-                        WhatsApp
-                    </a>
-                </div>
-            </div>
-            <div style="flex: 1; min-width: 260px; display: flex; justify-content: center;">
-                <img src="assets/edited/A3edited.png" alt="Kitronix Support" style="max-width: 100%; width: 420px; object-fit: contain; filter: drop-shadow(0 8px 32px rgba(0,0,0,0.18));">
-            </div>
-             </div>
-        </div>
-
-        <hr style="margin: 0 0 60px 0; border-color: var(--tech-border);">
-        <div class="specs-section">
-            <h2 class="section-title">Technical Specifications</h2>
-            <table class="specs-table">
-                <tbody>
-                    <tr>
-                        <td>Processor</td>
-                        <td>STM32H7 Series (480MHz)</td>
-                    </tr>
-                    <tr>
-                        <td>IMU Sensor</td>
-                        <td> ICM-42688, BMI088</td>
-                    </tr>
-                    <tr>
-                        <td>Barometer</td>
-                        <td>BMP388</td>
-                    </tr>
-                    <tr>
-                        <td>Magnetometer</td>
-                        <td>BMM350</td>
-                    </tr>
-                    <tr>
-                        <td>Input Voltage</td>
-                        <td>4.5V - 5.5V (USB Powered / Dedicated 5V BEC)</td>
-                    </tr>
-                    <tr>
-                        <td>Connectivity</td>
-                        <td>2 x GPS, 3 x telemetry, 2 x CAN, 1 x I²C port</td>
-                    </tr>
-                    <tr>
-                        <td>Storage</td>
-                        <td>256MB Onboard Flash + MicroSD Slot</td>
-                    </tr>
-                    <tr>
-                        <td>Dimensions</td>
-                        <td>85mm × 50mm × 15mm</td>
-                    </tr>
-                    <tr>
-                        <td>Weight</td>
-                        <td>42g (Without Cables)</td>
-                    </tr>
-                    <tr>
-                        <td>Operating Temperature</td>
-                        <td>-40°C to +85°C</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- YouTube Video Section -->
-<div class="specs-section">
-    <h2 class="section-title">Product Demo Videos</h2>
-    <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;">
-        <div style="flex: 1 1 300px; max-width: 400px;">
-            <iframe width="100%" height="225" src="https://www.youtube.com/embed/FBmfpKfTayc" title="YouTube video player 1" frameborder="0" allowfullscreen></iframe>
-        </div>
-        <div style="flex: 1 1 300px; max-width: 400px;">
-            <iframe width="100%" height="225" src="https://www.youtube.com/embed/uLqETkxPF4Q" title="YouTube video player 2" frameborder="0" allowfullscreen></iframe>
-        </div>
-        <div style="flex: 1 1 300px; max-width: 400px;">
-            <iframe width="100%" height="225" src="https://www.youtube.com/embed/nK_y9cnyppQ" title="YouTube video player 3" frameborder="0" allowfullscreen></iframe>
-        </div>
+<!-- Nav -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html" aria-label="KITE H7 home">
+      <img id="siteLogo" src="assets/edited/kiteh7.png" alt="KITE H7">
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="index.html">Overview</a>
+      <a href="#highlights">Highlights</a>
+      <a href="#compat">Compatibility</a>
+      <a href="#specs">Tech specs</a>
+      <a href="#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn nav-buy" href="#buy">Buy</a>
+      <button class="icon-btn" id="themeToggleBtn" aria-label="Switch colour theme">
+        <span class="material-symbols-outlined" id="themeToggleIcon">dark_mode</span>
+      </button>
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
     </div>
+  </div>
+</header>
+
+<main>
+
+<!-- Buy -->
+<section class="buy" id="buy">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a><span aria-hidden="true">/</span><span>Buy KITE H7</span>
+    </nav>
+
+    <div class="buy-grid">
+      <div class="buy-gallery">
+        <div class="stage-img">
+          <img id="mainProductImage" src="assets/edited/kite4.png" alt="KITE H7 flight controller">
+        </div>
+        <div class="thumbs" role="group" aria-label="Product images">
+          <button class="thumb" aria-pressed="true" data-src="assets/edited/kite4.png" aria-label="View 1"><img src="assets/edited/kite4.png" alt=""></button>
+          <button class="thumb" aria-pressed="false" data-src="assets/edited/kite7.png" aria-label="View 2"><img src="assets/edited/kite7.png" alt=""></button>
+          <button class="thumb" aria-pressed="false" data-src="assets/edited/kite5.png" aria-label="View 3"><img src="assets/edited/kite5.png" alt=""></button>
+          <button class="thumb" aria-pressed="false" data-src="assets/edited/kite6.png" aria-label="View 4"><img src="assets/edited/kite6.png" alt=""></button>
+        </div>
+      </div>
+
+      <div class="buy-panel">
+        <h1>Buy KITE&nbsp;H7</h1>
+        <p class="lead">An STM32H7 flight controller with dual IMUs, ready for custom firmware, ArduPilot and PX4.</p>
+
+        <div class="price-block">
+          <div class="price" id="totalPrice">₹26,000.00</div>
+          <div class="price-note" id="gstNote">Inclusive of 5% GST</div>
+          <div class="stock">In stock</div>
+
+          <div class="buy-row" id="buyRow">
+            <div class="stepper" role="group" aria-label="Quantity">
+              <button type="button" id="qtyMinus" aria-label="Decrease quantity"><span class="material-symbols-outlined">remove</span></button>
+              <output id="qtyValue" aria-live="polite">1</output>
+              <button type="button" id="qtyPlus" aria-label="Increase quantity"><span class="material-symbols-outlined">add</span></button>
+            </div>
+            <a href="#" class="btn" id="buyNowBtn">Buy now</a>
+          </div>
+          <a href="#" class="btn btn-ghost enquire" id="enquireBtn">Enquire on WhatsApp</a>
+          <p class="b2b">Bulk or B2B orders: <a href="mailto:business@kiteh7.in">business@kiteh7.in</a></p>
+        </div>
+
+        <ul class="key-list">
+          <li><span class="material-symbols-outlined">memory</span>STM32H7 at 480 MHz</li>
+          <li><span class="material-symbols-outlined">flight</span>High stability</li>
+          <li><span class="material-symbols-outlined">code</span>Custom‑built firmware</li>
+          <li><span class="material-symbols-outlined">device_thermostat</span>Rated −40 °C to +85 °C</li>
+          <li><span class="material-symbols-outlined">support_agent</span>24/7 after‑sales support</li>
+        </ul>
+
+        <div class="box">
+          <h2>What’s in the box</h2>
+          <ul>
+            <li><span class="material-symbols-outlined">memory</span>KITE H7 main board with pre‑installed firmware</li>
+            <li><span class="material-symbols-outlined">cable</span>JST‑GH connectors and power cables</li>
+            <li><span class="material-symbols-outlined">description</span>Quick start guide and technical manual</li>
+          </ul>
+        </div>
+        <p class="sku">SKU 31387</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Overview + highlights -->
+<section class="statement on-black" id="highlights">
+  <div class="wrap">
+    <p class="statement-text">KITE H7 is a high‑performance flight controller for hobbyists and professional UAV builders. <span class="dim">Built on the STM32H7 and ready for custom firmware, ArduPilot and PX4, it adapts to every autonomous project you take on.</span></p>
+    <div class="facts">
+      <div class="fact"><div class="fact-big">480<small>MHz</small></div><p>ARM Cortex‑M7 core</p></div>
+      <div class="fact"><div class="fact-big">2<small>IMUs</small></div><p>ICM‑42688 and BMI088, dual‑redundant</p></div>
+      <div class="fact"><div class="fact-big">14<small>PWM</small></div><p>Outputs for versatile UAV setups</p></div>
+      <div class="fact"><div class="fact-big">42<small>g</small></div><p>Compact and lightweight, without cables</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Compatibility -->
+<section class="compat" id="compat">
+  <div class="wrap">
+    <div class="compat-head">
+      <h2 class="display">Works with the gear <span class="hl">you already use.</span></h2>
+      <p class="lead">Built for the standard autopilot ecosystem and a wide range of professional UAV peripherals.</p>
+    </div>
+
+    <div class="seg-wrap">
+      <div class="seg" role="tablist" aria-label="Peripheral types" id="seg">
+        <span class="seg-pill" aria-hidden="true"></span>
+        <button role="tab" aria-selected="true" aria-controls="panel-gps" data-tab="gps">GPS</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-telemetry" data-tab="telemetry" tabindex="-1">Telemetry</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-power" data-tab="power" tabindex="-1">Power</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-esc" data-tab="esc" tabindex="-1">ESC</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-rc" data-tab="rc" tabindex="-1">RC input</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-sensors" data-tab="sensors" tabindex="-1">Sensors</button>
+      </div>
+    </div>
+
+    <div class="compat-panel" id="panel-gps" role="tabpanel">
+      <div><h3>GPS and GNSS</h3><p>High‑precision positioning with single‑band, multi‑band and RTK GNSS.</p></div>
+      <ul class="rows">
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>u‑blox M8 / M9 GNSS series</strong><span>Standard single‑band GNSS for reliable navigation</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Dual‑band RTK GNSS (ZED‑F9P class)</strong><span>Centimetre‑level precision for survey and mapping</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>UART, CAN (DroneCAN) and I²C</strong><span>Flexible connection options for any GPS module</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Integrated compass and PPS time sync</strong><span>Onboard magnetometer with precise pulse‑per‑second timing</span></div></li>
+      </ul>
+    </div>
+
+    <div class="compat-panel" id="panel-telemetry" role="tabpanel" hidden>
+      <div><h3>Telemetry and communication</h3><p>Long‑range and high‑speed data links for real‑time monitoring and mission control.</p></div>
+      <ul class="rows">
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>SiK telemetry radios</strong><span>433 / 868 / 915 MHz long‑range data links</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>High‑speed UART telemetry</strong><span>Up to 921,600 baud for low‑latency streaming</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>DroneCAN telemetry devices</strong><span>CAN‑based telemetry for noise‑immune communication</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>MAVLink protocol</strong><span>Industry standard for GCS and companion computers</span></div></li>
+      </ul>
+    </div>
+
+    <div class="compat-panel" id="panel-power" role="tabpanel" hidden>
+      <div><h3>Power modules</h3><p>Safe, reliable power delivery with real‑time battery monitoring.</p></div>
+      <ul class="rows">
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Analog power modules</strong><span>Voltage and current sensing for battery monitoring</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Smart CAN power modules</strong><span>DroneCAN smart power with cell‑level data</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Dual power input with failover</strong><span>Automatic switchover for mission‑critical redundancy</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>2S to 12S battery systems</strong><span>Wide voltage range for all UAV configurations</span></div></li>
+      </ul>
+    </div>
+
+    <div class="compat-panel" id="panel-esc" role="tabpanel" hidden>
+      <div><h3>ESC and motor output</h3><p>Flexible motor control for legacy and modern ESC protocols.</p></div>
+      <ul class="rows">
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>PWM, OneShot, Multishot</strong><span>Full legacy protocol support</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>DShot 150 / 300 / 600</strong><span>Digital protocol for precise, jitter‑free motor control</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Bi‑directional DShot</strong><span>RPM telemetry for dynamic notch filtering</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>14 PWM outputs</strong><span>MAIN and AUX channels for complex vehicle configurations</span></div></li>
+      </ul>
+    </div>
+
+    <div class="compat-panel" id="panel-rc" role="tabpanel" hidden>
+      <div><h3>RC input</h3><p>Works with modern and legacy radio control systems.</p></div>
+      <ul class="rows">
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>SBUS</strong><span>Standard FrSky / Futaba serial bus</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>DSM2 / DSMX</strong><span>Spektrum satellite receivers</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>CRSF / ELRS</strong><span>Low‑latency, long‑range Crossfire and ExpressLRS</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>PPM</strong><span>Legacy pulse position modulation</span></div></li>
+      </ul>
+    </div>
+
+    <div class="compat-panel" id="panel-sensors" role="tabpanel" hidden>
+      <div><h3>Sensors and expansion</h3><p>Built for redundancy, precision and future expansion.</p></div>
+      <ul class="rows">
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>External magnetometers</strong><span>I²C and CAN for compass redundancy</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Barometer and airspeed sensors</strong><span>Precision altitude and differential pressure</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Rangefinders</strong><span>UART, I²C and CAN lidar or sonar</span></div></li>
+        <li><span class="material-symbols-outlined">check_circle</span><div><strong>Companion computers</strong><span>UART and USB links for Raspberry Pi, Jetson and more</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Support -->
+<section class="support on-black" id="support">
+  <div class="wrap support-grid">
+    <div>
+      <h2 class="display">Help, <span class="hl">any hour.</span></h2>
+      <p class="lead" style="margin-top:18px;">Troubleshooting, guidance or firmware updates, our team is available around the clock to keep your hardware performing at its best.</p>
+    </div>
+    <ul class="support-links">
+      <li>
+        <a href="mailto:business@kiteh7.in">
+          <span class="material-symbols-outlined">mail</span>
+          <span><strong>Email us</strong><span class="desc">business@kiteh7.in</span></span>
+          <span class="material-symbols-outlined go">arrow_forward</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" id="waSupport" target="_blank" rel="noopener">
+          <span class="material-symbols-outlined">chat</span>
+          <span><strong>Chat on WhatsApp</strong><span class="desc">Quick answers from our engineers</span></span>
+          <span class="material-symbols-outlined go">arrow_forward</span>
+        </a>
+      </li>
+      <li>
+        <a href="#"><!-- TODO: link the user manual PDF -->
+          <span class="material-symbols-outlined">description</span>
+          <span><strong>User manual</strong><span class="desc">Installation and operation guide (PDF)</span></span>
+          <span class="material-symbols-outlined go">download</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- Tech specs -->
+<section class="specs" id="specs">
+  <div class="wrap">
+    <h2 class="display">Tech specs</h2>
+    <div class="spec-table">
+      <div class="spec-row">
+        <h3>Processor and storage</h3>
+        <div class="spec-items">
+          <div><div class="spec-k">Processor</div><div class="spec-v">STM32H7</div></div>
+          <div><div class="spec-k">Core</div><div class="spec-v">ARM Cortex‑M7</div></div>
+          <div><div class="spec-k">Clock speed</div><div class="spec-v">480 MHz</div></div>
+          <div><div class="spec-k">Storage</div><div class="spec-v">256 MB flash</div><div class="spec-k">Plus microSD slot</div></div>
+        </div>
+      </div>
+      <div class="spec-row">
+        <h3>Sensors</h3>
+        <div class="spec-items">
+          <div><div class="spec-k">IMU 1</div><div class="spec-v">ICM‑42688</div></div>
+          <div><div class="spec-k">IMU 2</div><div class="spec-v">BMI088</div></div>
+          <div><div class="spec-k">Barometer</div><div class="spec-v">BMP388</div></div>
+          <div><div class="spec-k">Magnetometer</div><div class="spec-v">BMM350</div></div>
+        </div>
+      </div>
+      <div class="spec-row">
+        <h3>Connectivity</h3>
+        <div class="spec-items">
+          <div><div class="spec-k">GPS ports</div><div class="spec-v">2</div></div>
+          <div><div class="spec-k">Telemetry ports</div><div class="spec-v">3</div></div>
+          <div><div class="spec-k">CAN</div><div class="spec-v">2</div></div>
+          <div><div class="spec-k">I²C</div><div class="spec-v">1</div></div>
+          <div><div class="spec-k">PWM outputs</div><div class="spec-v">14</div></div>
+        </div>
+      </div>
+      <div class="spec-row">
+        <h3>Power</h3>
+        <div class="spec-items">
+          <div><div class="spec-k">Input voltage</div><div class="spec-v">4.5 – 5.5 V</div><div class="spec-k">USB or dedicated 5 V BEC</div></div>
+        </div>
+      </div>
+      <div class="spec-row">
+        <h3>Size and environment</h3>
+        <div class="spec-items">
+          <!-- CHECK: product list said 63 × 48 × 18 mm, spec table said 85 × 50 × 15 mm -->
+          <div><div class="spec-k">Dimensions</div><div class="spec-v">85 × 50 × 15 mm</div></div>
+          <div><div class="spec-k">Weight</div><div class="spec-v">42 g</div><div class="spec-k">Without cables</div></div>
+          <div><div class="spec-k">Operating temperature</div><div class="spec-v">−40 to +85 °C</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <h2 class="display">Questions? <span class="hl">Answers.</span></h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What firmware does KITE H7 support?<span class="plus" aria-hidden="true"></span></button>
+        <div class="faq-a"><div><p>KITE H7 works with custom firmware stacks, including ArduPilot and PX4. It ships with firmware pre‑installed and can be reflashed over USB or SD card.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What is the dual IMU architecture?<span class="plus" aria-hidden="true"></span></button>
+        <div class="faq-a"><div><p>KITE H7 has two independent IMUs, the ICM‑42688 (TDK InvenSense) and the BMI088 (Bosch). The redundant setup improves vibration resistance and attitude estimation, and keeps performance reliable during aggressive manoeuvres.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Which connectors and interfaces are available?<span class="plus" aria-hidden="true"></span></button>
+        <div class="faq-a"><div><p>The board provides 8 UARTs, 14 PWM outputs, I²C, SPI and CAN bus. It has 2 GPS ports and 3 telemetry ports, all on JST‑GH connectors for reliable, compact wiring.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What’s in the box?<span class="plus" aria-hidden="true"></span></button>
+        <div class="faq-a"><div><p>The KITE H7 main board with pre‑installed firmware, JST‑GH connectors and power cables, and a quick start guide with technical manual.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What is the operating temperature range?<span class="plus" aria-hidden="true"></span></button>
+        <div class="faq-a"><div><p>KITE H7 is rated from −40 °C to +85 °C, so it suits missions in extreme cold and high heat.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">How do I get support after purchase?<span class="plus" aria-hidden="true"></span></button>
+        <div class="faq-a"><div><p>Support is available 24/7. Email <a href="mailto:business@kiteh7.in">business@kiteh7.in</a> any time.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Can I place a bulk or B2B order?<span class="plus" aria-hidden="true"></span></button>
+        <div class="faq-a"><div><p>Yes. Email <a href="mailto:business@kiteh7.in">business@kiteh7.in</a> and our team will reply with pricing and delivery details.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Sticky buy bar -->
+<div class="buybar" id="buybar" aria-hidden="true">
+  <div class="buybar-inner">
+    <div><strong>KITE H7</strong><span id="barPrice">₹26,000.00</span></div>
+    <a href="#buy" class="btn" tabindex="-1">Buy</a>
+  </div>
 </div>
 
-        <!-- FAQ Section -->
-        <div class="specs-section" id="faq">
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What firmware does the Kite H7 support?</span>
-                        <span class="material-symbols-outlined faq-icon">expand_more</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>The Kite H7 is compatible with any customized firmware stack including ArduPilot and PX4. It ships with pre-installed firmware and can be reflashed via USB or SD card.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What is the Dual IMU architecture?</span>
-                        <span class="material-symbols-outlined faq-icon">expand_more</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>The Kite H7 features two independent IMU sensors — ICM-42688 (TDK InvenSense) and BMI088 (Bosch). This dual-redundant setup improves vibration resistance, increases attitude estimation accuracy, and ensures reliable performance even during aggressive maneuvers.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What connectors and interfaces are available?</span>
-                        <span class="material-symbols-outlined faq-icon">expand_more</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>The board provides 8× UART, 14× PWM outputs, I2C, SPI, and CAN Bus interfaces. It supports 2 GPS ports, 3 telemetry ports, and uses JST-GH connectors for reliable, compact wiring.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What is included in the box?</span>
-                        <span class="material-symbols-outlined faq-icon">expand_more</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Each unit ships with the Kite H7 main board (with pre-installed firmware), JST-GH connectors and power cables, and a quick start guide with technical manual.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What is the operating temperature range?</span>
-                        <span class="material-symbols-outlined faq-icon">expand_more</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>The Kite H7 is rated for operation from –40°C to +85°C, making it suitable for a wide range of environmental conditions including extreme cold and high-temperature missions.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>How do I get support after purchase?</span>
-                        <span class="material-symbols-outlined faq-icon">expand_more</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>We offer 24/7 after-sales support. You can reach us anytime via email at <a href="mailto:kitronix240@gmail.com" style="color: var(--primary); font-weight: 600;">kitronix240@gmail.com</a> or through <a href="https://wa.me/917200275179" target="_blank" style="color: var(--primary); font-weight: 600;">WhatsApp</a> for troubleshooting, firmware updates, and guidance.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>Can I place a bulk or B2B order?</span>
-                        <span class="material-symbols-outlined faq-icon">expand_more</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes! For bulk orders or B2B inquiries, please email us at <a href="mailto:kitronix240@gmail.com" style="color: var(--primary); font-weight: 600;">kitronix240@gmail.com</a> and our team will get back to you with pricing and delivery details.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <strong>KITE H7</strong>
+        <p>Flight controllers for professional UAV builders.</p>
+        <p style="margin-top:10px;">6th Ave, Ashok Nagar, Chennai 600083</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="#specs">Tech specs</a></li>
+          <li><a href="#compat">Compatibility</a></li>
+          <li><a href="#buy">Buy</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#support">User manual</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+          <li><a href="index.html#visit">Visit us</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Terms of service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">© 2026 KITE H7. All rights reserved.</div>
+  </div>
+</footer>
 
-    <!-- Reddit Community Section -->
-    <section id="community" class="light-section" style="border-top: 1px solid var(--tech-border);">
-        <div class="section-container">
-            <div class="section-title">
-                <h2>Community Updates</h2>
-                <div class="section-divider"></div>
-                <p class="section-description">Latest posts from our Reddit community</p>
-            </div>
-            <div id="redditPosts" class="reddit-grid">
-                <div class="reddit-loading" id="redditLoading">
-                    <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--primary); animation: spin 1s linear infinite;">progress_activity</span>
-                    <p style="margin-top: 0.5rem; color: rgba(0,0,0,0.5);">Loading Reddit posts...</p>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="https://www.reddit.com/r/Kitronix_Kite_H7/" target="_blank" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-                    Visit r/Kitronix_Kite_H7
-                </a>
-            </div>
-        </div>
-    </section>
+<script>
+/* ── Settings ── */
+var WHATSAPP_NUMBER = '917904198076';   // KITE H7 business WhatsApp
+var UNIT_PRICE = 26000;                 // per unit, inclusive of GST
+var GST_RATE = 0.05;
+var MAX_QTY = 99;
 
-    <footer>
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h4>Product</h4>
-                    <ul>
-                        <li><a href="index.html#specs">Specifications</a></li>
-                        <li><a href="#">Downloads</a></li>
-                        <li><a href="#">Documentation</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Firmware Updates</a></li>
-                        <li><a href="#">Warranty</a></li>
-                        <li><a href="index.html#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Technology</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Press</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Compliance</a></li>
-                        <li><a href="#">Export Control</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Kite H7. All rights reserved.</p>
-                
-            </div>
-        </div>
-    </footer>
+function fmt(n) { return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function waLink(text) { return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(text); }
 
-    <script>
-        // Change main image function
-        function changeImage(imageSrc, element) {
-            document.getElementById('mainProductImage').src = imageSrc;
-            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
-        }
+/* Nav: border on scroll + mobile menu */
+(function () {
+  var nav = document.getElementById('nav');
+  var btn = document.getElementById('menuBtn');
+  var links = document.getElementById('navLinks');
+  function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 8); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  function setOpen(open) {
+    nav.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open);
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    btn.querySelector('span').textContent = open ? 'close' : 'menu';
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  btn.addEventListener('click', function () { setOpen(!nav.classList.contains('open')); });
+  links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 833) setOpen(false); });
+})();
 
-        // FAQ accordion toggle
-        function toggleFaq(btn) {
-            const item = btn.parentElement;
-            const isActive = item.classList.contains('active');
-            // Close all other items
-            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-            // Toggle current
-            if (!isActive) item.classList.add('active');
-        }
+/* Gallery */
+(function () {
+  var main = document.getElementById('mainProductImage');
+  var thumbs = document.querySelectorAll('.thumb');
+  thumbs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      if (t.getAttribute('aria-pressed') === 'true') return;
+      thumbs.forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+      t.setAttribute('aria-pressed', 'true');
+      main.classList.add('is-out');
+      setTimeout(function () {
+        main.onload = function () { main.classList.remove('is-out'); };
+        main.src = t.getAttribute('data-src');
+        if (main.complete) main.classList.remove('is-out');
+      }, 220);
+    });
+  });
+})();
 
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mainNav = document.getElementById('mainNav');
-        
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mainNav.classList.toggle('active');
-                const icon = mobileMenuBtn.querySelector('.material-symbols-outlined');
-                icon.textContent = mainNav.classList.contains('active') ? 'close' : 'menu';
-            });
-        }
+/* Price, quantity and WhatsApp ordering */
+(function () {
+  var qty = 1;
+  var out = document.getElementById('qtyValue');
+  var minus = document.getElementById('qtyMinus');
+  var plus = document.getElementById('qtyPlus');
+  var price = document.getElementById('totalPrice');
+  var note = document.getElementById('gstNote');
+  var barPrice = document.getElementById('barPrice');
 
-        // Close mobile menu when clicking nav links
-        const navLinks = mainNav.querySelectorAll('a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mainNav.classList.remove('active');
-                const icon = mobileMenuBtn.querySelector('.material-symbols-outlined');
-                icon.textContent = 'menu';
-            });
-        });
+  function render(animate) {
+    var total = UNIT_PRICE * qty;
+    var gst = total - total / (1 + GST_RATE);
+    out.textContent = qty;
+    price.textContent = fmt(total);
+    barPrice.textContent = fmt(total);
+    note.textContent = (qty > 1 ? qty + ' units, i' : 'I') + 'nclusive of ' + fmt(gst) + ' GST (5%)';
+    minus.disabled = qty <= 1;
+    plus.disabled = qty >= MAX_QTY;
+    if (animate) { price.classList.remove('bump'); void price.offsetWidth; price.classList.add('bump'); }
+  }
+  minus.addEventListener('click', function () { if (qty > 1) { qty--; render(true); } });
+  plus.addEventListener('click', function () { if (qty < MAX_QTY) { qty++; render(true); } });
+  render(false);
 
-        // ── Price × Quantity + GST calculator ──────────────────────
-        const BASE_PRICE = 18761.90;   // price before GST (19700 ÷ 1.05)
-        const GST_RATE   = 0.05;     // 5%
+  document.getElementById('buyNowBtn').addEventListener('click', function (e) {
+    e.preventDefault();
+    window.open(waLink('Hi, I’m interested in ' + qty + ' unit' + (qty > 1 ? 's' : '') + ' of the KITE H7 flight controller.'), '_blank', 'noopener');
+  });
+  document.getElementById('enquireBtn').addEventListener('click', function (e) {
+    e.preventDefault();
+    window.open(waLink('Hi, I’m interested in the KITE H7 flight controller.'), '_blank', 'noopener');
+  });
+  document.getElementById('waSupport').href = waLink('Hi, I need help with my KITE H7 flight controller.');
+})();
 
-        const qtyInput     = document.getElementById('qtyInput');
-        const qtyMinus     = document.getElementById('qtyMinus');
-        const qtyPlus      = document.getElementById('qtyPlus');
-        const elTotal      = document.getElementById('totalPrice');
+/* Sticky buy bar once the buy button scrolls away */
+(function () {
+  var bar = document.getElementById('buybar');
+  var row = document.getElementById('buyRow');
+  if (!('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function (entries) {
+    var e = entries[0];
+    var show = !e.isIntersecting && e.boundingClientRect.top < 0;
+    bar.classList.toggle('show', show);
+    bar.setAttribute('aria-hidden', !show);
+    bar.querySelector('a').tabIndex = show ? 0 : -1;
+  }).observe(row);
+})();
 
-        function fmt(n) { return n.toFixed(2); }
+/* Compatibility segmented control */
+(function () {
+  var seg = document.getElementById('seg');
+  var pill = seg.querySelector('.seg-pill');
+  var tabs = Array.prototype.slice.call(seg.querySelectorAll('[role="tab"]'));
 
-        function updatePrice() {
-            const qty      = parseInt(qtyInput.value) || 1;
-            const base     = BASE_PRICE * qty;
-            const gst      = base * GST_RATE;
-            const total    = base + gst;
+  function movePill(tab) {
+    pill.style.width = tab.offsetWidth + 'px';
+    pill.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
+  }
+  function select(tab, focus) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on);
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    movePill(tab);
+    if (focus) tab.focus();
+    tab.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { select(t); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); select(tabs[(i + 1) % tabs.length], true); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); select(tabs[(i - 1 + tabs.length) % tabs.length], true); }
+    });
+  });
+  function current() { return seg.querySelector('[aria-selected="true"]'); }
+  window.addEventListener('resize', function () { movePill(current()); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { movePill(current()); });
+  movePill(current());
+})();
 
-            elTotal.textContent   = fmt(total);
-            var elTotalMobile = document.getElementById('totalPriceMobile');
-            if (elTotalMobile) elTotalMobile.textContent = fmt(total);
-        }
+/* FAQ accordion */
+(function () {
+  var items = document.querySelectorAll('.faq-item');
+  items.forEach(function (item) {
+    var q = item.querySelector('.faq-q');
+    q.addEventListener('click', function () {
+      var open = !item.classList.contains('open');
+      items.forEach(function (i) { i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded', 'false'); });
+      if (open) { item.classList.add('open'); q.setAttribute('aria-expanded', 'true'); }
+    });
+  });
+})();
 
-        qtyMinus.addEventListener('click', () => {
-            let v = parseInt(qtyInput.value);
-            if (v > 1) { qtyInput.value = v - 1; updatePrice(); }
-        });
-
-        qtyPlus.addEventListener('click', () => {
-            qtyInput.value = parseInt(qtyInput.value) + 1;
-            updatePrice();
-        });
-
-        updatePrice(); // init
-
-        // ── Peripheral Compatibility Tabs ──────────────────────
-        (function() {
-            const tabs = document.querySelectorAll('.periph-tab');
-            const panels = document.querySelectorAll('.periph-panel');
-            tabs.forEach(function(tab) {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(function(t) { t.classList.remove('active'); });
-                    panels.forEach(function(p) { p.classList.remove('active'); });
-                    tab.classList.add('active');
-                    var panel = document.getElementById('panel-' + tab.getAttribute('data-tab'));
-                    if (panel) panel.classList.add('active');
-                });
-            });
-        })();
-
-        // Mobile quantity sync
-        const mobileQtyInput = document.querySelector('.mobile-qty-input');
-        const mobileQtyMinus = document.querySelector('.mobile-qty-minus');
-        const mobileQtyPlus = document.querySelector('.mobile-qty-plus');
-        const mobileBuyBtn = document.querySelector('.mobile-buy-now-btn');
-
-        function syncQty(val) {
-            qtyInput.value = val;
-            if (mobileQtyInput) mobileQtyInput.value = val;
-            updatePrice();
-        }
-
-        if (mobileQtyMinus) {
-            mobileQtyMinus.addEventListener('click', () => {
-                let v = parseInt(mobileQtyInput.value);
-                if (v > 1) syncQty(v - 1);
-            });
-        }
-        if (mobileQtyPlus) {
-            mobileQtyPlus.addEventListener('click', () => {
-                syncQty(parseInt(mobileQtyInput.value) + 1);
-            });
-        }
-        if (mobileBuyBtn) {
-            mobileBuyBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const qty = parseInt(mobileQtyInput.value) || 1;
-                const message = `Hi I'm interested in ${qty} unit${qty > 1 ? 's' : ''} of Kite H7 Flight Controllers`;
-                window.open(`https://wa.me/917200275179?text=${encodeURIComponent(message)}`, '_blank');
-            });
-        }
-
-        // Buy now with quantity
-        const buyNowBtn = document.getElementById('buyNowBtn');
-        buyNowBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const qty = parseInt(qtyInput.value) || 1;
-            const message = `Hi I'm interested in ${qty} unit${qty > 1 ? 's' : ''} of Kite H7 Flight Controllers`;
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/917200275179?text=${encodedMessage}`;
-            window.open(whatsappUrl, '_blank');
-        });
-
-        // Mobile navbar scroll behavior
-        let lastScrollTop = 0;
-        const header = document.querySelector('header');
-
-        function handleScroll() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            // Show navbar when scrolling up, hide when scrolling down
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // Scrolling down
-                header.classList.remove('mobile-visible');
-            } else {
-                // Scrolling up or at top
-                header.classList.add('mobile-visible');
-            }
-
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        }
-
-        // Only apply on mobile/tablet
-        function checkMobile() {
-            if (window.innerWidth <= 1024) {
-                window.addEventListener('scroll', handleScroll);
-                handleScroll(); // Initial check
-            } else {
-                window.removeEventListener('scroll', handleScroll);
-                header.classList.remove('mobile-visible');
-            }
-        }
-
-        window.addEventListener('resize', checkMobile);
-        checkMobile(); // Initial check
-    </script>
-
-    <!-- Reddit Pinned Posts Integration -->
-    <script>
-    (function () {
-        var SUBREDDIT = 'Kitronix_Kite_H7';
-        var API_URL = 'https://www.reddit.com/r/' + SUBREDDIT + '/hot.json?limit=10';
-        var container = document.getElementById('redditPosts');
-        var loading = document.getElementById('redditLoading');
-
-        function timeAgo(utc) {
-            var seconds = Math.floor((Date.now() / 1000) - utc);
-            if (seconds < 60) return seconds + 's ago';
-            var minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return minutes + 'm ago';
-            var hours = Math.floor(minutes / 60);
-            if (hours < 24) return hours + 'h ago';
-            var days = Math.floor(hours / 24);
-            if (days < 30) return days + 'd ago';
-            var months = Math.floor(days / 30);
-            return months + 'mo ago';
-        }
-
-        function escapeHtml(text) {
-            var div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function createCard(post) {
-            var isPinned = post.stickied;
-            var card = document.createElement('a');
-            card.className = 'reddit-card';
-            card.href = 'https://www.reddit.com' + post.permalink;
-            card.target = '_blank';
-            card.rel = 'noopener noreferrer';
-
-            card.innerHTML =
-                '<div class="reddit-card-header">' +
-                    (isPinned ? '<span class="reddit-card-pin"><span class="material-symbols-outlined" style="font-size:12px;">push_pin</span> Pinned</span>' : '') +
-                    '<span>u/kitronix240</span>' +
-                    '<span>&bull;</span>' +
-                    '<span>' + timeAgo(post.created_utc) + '</span>' +
-                '</div>' +
-                '<h3>' + escapeHtml(post.title) + '</h3>' +
-                (post.selftext ? '<p>' + escapeHtml(post.selftext.substring(0, 200)) + (post.selftext.length > 200 ? '...' : '') + '</p>' : '') +
-                '<div class="reddit-card-footer">' +
-                    '<span><span class="material-symbols-outlined" style="font-size:16px;">arrow_upward</span> ' + post.ups + '</span>' +
-                    '<span><span class="material-symbols-outlined" style="font-size:16px;">chat_bubble</span> ' + post.num_comments + '</span>' +
-                    '<span style="margin-left:auto;"><span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span> Read more</span>' +
-                '</div>';
-
-            return card;
-        }
-
-        function renderFallback() {
-            if (loading) loading.remove();
-            container.innerHTML =
-                '<a class="reddit-card" href="https://www.reddit.com/r/Kitronix_Kite_H7/" target="_blank">' +
-                    '<div class="reddit-card-header"><span class="reddit-card-pin"><span class="material-symbols-outlined" style="font-size:12px;">push_pin</span> Pinned</span><span>u/kitronix240</span></div>' +
-                    '<h3>Visit our Reddit community for the latest updates</h3>' +
-                    '<p>Join the Kitronix community on Reddit for product announcements, firmware updates, build guides, and technical discussions.</p>' +
-                    '<div class="reddit-card-footer"><span style="margin-left:auto;"><span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span> Visit Reddit</span></div>' +
-                '</a>' +
-                '<a class="reddit-card" href="https://www.reddit.com/r/Kitronix_Kite_H7/" target="_blank">' +
-                    '<div class="reddit-card-header"><span class="reddit-card-pin"><span class="material-symbols-outlined" style="font-size:12px;">push_pin</span> Pinned</span><span>u/kitronix240</span></div>' +
-                        '<h3>Kite H7 Getting Started Guide</h3>' +
-                    '<p>Everything you need to know to set up your Kite H7 flight controller \u2014 from unboxing to first flight.</p>' +
-                    '<div class="reddit-card-footer"><span style="margin-left:auto;"><span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span> Visit Reddit</span></div>' +
-                '</a>' +
-                '<a class="reddit-card" href="https://www.reddit.com/r/Kitronix_Kite_H7/" target="_blank">' +
-                    '<div class="reddit-card-header"><span class="reddit-card-pin"><span class="material-symbols-outlined" style="font-size:12px;">push_pin</span> Pinned</span><span>u/kitronix240</span></div>' +
-                    '<h3>Firmware Update v2.1 \u2014 What\u0027s New</h3>' +
-                    '<p>Improved GPS failsafe handling, smoother EKF convergence on dual-IMU, and new CAN bus diagnostics mode. Update guide included.</p>' +
-                    '<div class="reddit-card-footer"><span style="margin-left:auto;"><span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span> Visit Reddit</span></div>' +
-                '</a>';
-        }
-
-        fetch(API_URL)
-            .then(function (res) {
-                if (!res.ok) throw new Error('Reddit API error');
-                return res.json();
-            })
-            .then(function (data) {
-                var posts = data.data.children.map(function (c) { return c.data; });
-                var pinned = posts.filter(function (p) { return p.stickied; });
-                var regular = posts.filter(function (p) { return !p.stickied; });
-                var display = pinned.concat(regular).slice(0, 6);
-
-                if (display.length === 0) {
-                    renderFallback();
-                    return;
-                }
-
-                if (loading) loading.remove();
-                display.forEach(function (post) {
-                    container.appendChild(createCard(post));
-                });
-            })
-            .catch(function () {
-                renderFallback();
-            });
-    })();
-    </script>
-
-    <!-- Theme Toggle -->
-    <script>
-    (function () {
-        var btn = document.getElementById('themeToggleBtn');
-        var icon = document.getElementById('themeToggleIcon');
-        var logo = document.getElementById('siteLogo');
-        var html = document.documentElement;
-
-        var LOGO_LIGHT = 'assets/edited/Kitronix.png';
-        var LOGO_DARK  = 'assets/edited/Logo2.png';
-
-        function applyTheme(theme) {
-            html.setAttribute('data-theme', theme);
-            icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
-            if (logo) logo.src = theme === 'dark' ? LOGO_DARK : LOGO_LIGHT;
-        }
-
-        // Apply saved theme on load
-        var saved = localStorage.getItem('kitronix-theme') || 'light';
-        applyTheme(saved);
-
-        btn.addEventListener('click', function () {
-            var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('kitronix-theme', next);
-            applyTheme(next);
-        });
-    })();
-    </script>
-
+/* Theme toggle (shared with the home page) */
+(function () {
+  var btn = document.getElementById('themeToggleBtn');
+  var icon = document.getElementById('themeToggleIcon');
+  var html = document.documentElement;
+  function apply(theme) {
+    html.setAttribute('data-theme', theme);
+    icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+  }
+  apply(html.getAttribute('data-theme') || 'light');
+  btn.addEventListener('click', function () {
+    var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('kiteh7-theme', next); } catch (e) {}
+    apply(next);
+  });
+})();
+</script>
 </body>
 </html>
